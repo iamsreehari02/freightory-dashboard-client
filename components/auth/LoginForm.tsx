@@ -8,17 +8,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AppButton } from "../shared/AppButton";
-import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { login } from "@/services/api/auth";
 import { ActionText } from "../shared/ActionText";
 import TextP from "../typography/TextP";
+import { AxiosError } from "axios";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -39,11 +38,17 @@ export default function LoginForm() {
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
       const res = await login(values);
-      console.log("response in login", res);
       toast.success("Logged in successfully!");
       // router.push("/dashboard");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Login failed!");
+    } catch (error) {
+      const err = error as AxiosError<{ message?: string }>;
+
+      const message =
+        err?.response?.data?.message ??
+        err?.message ??
+        "Something went wrong. Please try again.";
+
+      toast.error(message);
     }
   };
 

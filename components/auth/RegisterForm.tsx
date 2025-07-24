@@ -19,6 +19,7 @@ import { RegisterSchema, registerSchema } from "@/schemas/registerSchema";
 import { toast } from "sonner";
 import { register } from "@/services/api/auth";
 import { Eye, EyeOff } from "lucide-react";
+import { AxiosError } from "axios";
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -47,8 +48,13 @@ export default function RegisterForm() {
     try {
       await register(values);
       toast.success("Registered successfully!");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Registration failed");
+    } catch (error) {
+      const err = error as AxiosError<{ message?: string }>;
+
+      const message =
+        err?.response?.data?.message ?? err?.message ?? "Registration failed";
+
+      toast.error(message);
     }
   }
 
