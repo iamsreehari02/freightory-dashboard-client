@@ -18,13 +18,16 @@ import { AppButton } from "../shared/AppButton";
 import { RegisterSchema, registerSchema } from "@/schemas/registerSchema";
 import { toast } from "sonner";
 import { register } from "@/services/api/auth";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Minus, Plus } from "lucide-react";
 import { AxiosError } from "axios";
+import { AppDropdown } from "../shared/AppDropdown";
+import PasswordInput from "../form/PasswordInput";
+import PhoneInputField from "../form/PhoneInputField";
+import { Button } from "../ui/button";
 
 export default function RegisterForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [branchCount, setBranchCount] = useState(1);
 
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -44,16 +47,18 @@ export default function RegisterForm() {
     },
   });
 
+  const freightType = form.watch("freightType");
+  const showBranchCounter = freightType === "Freight Forwarder";
+  const totalAmount = branchCount * 50;
+
   async function onSubmit(values: RegisterSchema) {
     try {
       await register(values);
       toast.success("Registered successfully!");
     } catch (error) {
       const err = error as AxiosError<{ message?: string }>;
-
       const message =
         err?.response?.data?.message ?? err?.message ?? "Registration failed";
-
       toast.error(message);
     }
   }
@@ -98,11 +103,14 @@ export default function RegisterForm() {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="Phone number" {...field} />
+                  <PhoneInputField
+                    label="Phone"
+                    value={field.value}
+                    onChange={field.onChange}
+                    // error={form.formState.errors.phone?.message}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -126,7 +134,7 @@ export default function RegisterForm() {
             )}
           />
 
-          {/* Website - full width */}
+          {/* Website */}
           <FormField
             control={form.control}
             name="website"
@@ -146,7 +154,7 @@ export default function RegisterForm() {
             )}
           />
 
-          {/* Head Office Address - full width textarea */}
+          {/* Head Office Address */}
           <FormField
             control={form.control}
             name="headOfficeAddress"
@@ -195,46 +203,90 @@ export default function RegisterForm() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="freightType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="mb-2">Freight Type</FormLabel>
-                <div className="flex items-center space-x-6">
-                  <label className="flex items-center space-x-2">
-                    <Checkbox
-                      checked={field.value === "Freight Forwarder"}
-                      onCheckedChange={() =>
-                        field.onChange(
-                          field.value === "Freight Forwarder"
-                            ? undefined
-                            : "Freight Forwarder"
-                        )
-                      }
-                    />
-                    <span>Freight Forwarder</span>
-                  </label>
-                  <label className="flex items-center space-x-2 mb-2">
-                    <Checkbox
-                      checked={field.value === "NVOCC"}
-                      onCheckedChange={() =>
-                        field.onChange(
-                          field.value === "NVOCC" ? undefined : "NVOCC"
-                        )
-                      }
-                    />
-                    <span>NVOCC</span>
-                  </label>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Freight Type */}
+          <div className="col-span-2">
+            <FormField
+              control={form.control}
+              name="freightType"
+              render={({ field }) => (
+                <FormItem>
+                  <AppDropdown
+                    label="Freight Type"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select freight type"
+                    options={[
+                      {
+                        label: "Freight Forwarder",
+                        value: "Freight Forwarder",
+                      },
+                      { label: "NVOCC", value: "NVOCC" },
+                    ]}
+                    error={form.formState.errors.freightType?.message}
+                  />
+                </FormItem>
+              )}
+            />
+          </div>
 
-          {/* Move password fields here in a new row */}
+          {showBranchCounter && (
+            <div className="col-span-2 flex flex-col gap-2">
+              <div className="flex flex-row justify-between items-center w-full">
+                {/* Left label + subtext */}
+                <div className="flex flex-col">
+                  <label className="text-base font-semibold">
+                    Number of Branches
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    $50 per branch
+                  </p>
+                </div>
+
+                {/* Counter + total */}
+                <div className="flex items-center gap-6">
+                  {/* Counter */}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="w-9 h-9"
+                      onClick={() =>
+                        setBranchCount((prev) => Math.max(prev - 1, 1))
+                      }
+                    >
+                      <Minus className="w-5 h-5" />
+                    </Button>
+
+                    <span className="text-lg font-semibold w-8 text-center">
+                      {branchCount}
+                    </span>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="w-9 h-9"
+                      onClick={() => setBranchCount((prev) => prev + 1)}
+                    >
+                      <Plus className="w-5 h-5" />
+                    </Button>
+                  </div>
+
+                  {/* Total */}
+                  <div className="text-base font-medium">
+                    Total Amount:{" "}
+                    <span className="font-bold text-primary">
+                      ${totalAmount}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Passwords */}
           <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Password */}
             <FormField
               control={form.control}
               name="password"
@@ -242,32 +294,13 @@ export default function RegisterForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Input
-                        placeholder="Create a strong password"
-                        type={showPassword ? "text" : "password"}
-                        {...field}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-2 top-2.5 text-muted-foreground"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff size={18} />
-                        ) : (
-                          <Eye size={18} />
-                        )}
-                      </button>
-                    </div>
+                    <PasswordInput {...field} placeholder="Enter password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Confirm Password */}
             <FormField
               control={form.control}
               name="confirmPassword"
@@ -275,21 +308,10 @@ export default function RegisterForm() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Input
-                        placeholder="Re-enter your password"
-                        type={showConfirm ? "text" : "password"}
-                        {...field}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-2 top-2.5 text-muted-foreground"
-                        onClick={() => setShowConfirm(!showConfirm)}
-                      >
-                        {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
+                    <PasswordInput
+                      {...field}
+                      placeholder="Re-enter your password"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -298,6 +320,7 @@ export default function RegisterForm() {
           </div>
         </div>
 
+        {/* Terms and Conditions */}
         <div className="flex items-start space-x-2">
           <Checkbox
             checked={termsAccepted}
@@ -321,6 +344,7 @@ export default function RegisterForm() {
           </label>
         </div>
 
+        {/* Submit Button */}
         <AppButton
           type="submit"
           loading={form.formState.isSubmitting}

@@ -11,7 +11,7 @@ export default function TextH1({
   return (
     <h1
       className={cn(
-        "text-[38px] leading-[48px] text-center font-clash font-bold",
+        "text-[38px] leading-[48px]  font-clash font-bold",
         className
       )}
     >

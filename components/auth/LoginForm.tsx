@@ -18,6 +18,7 @@ import { login } from "@/services/api/auth";
 import { ActionText } from "../shared/ActionText";
 import TextP from "../typography/TextP";
 import { AxiosError } from "axios";
+import PasswordInput from "../form/PasswordInput";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -76,7 +77,7 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
+                <PasswordInput {...field} placeholder="Enter Password" />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -10,7 +10,7 @@ export default function TextP({ children, className = "" }: TextPProps) {
   return (
     <p
       className={cn(
-        "text-[18px] leading-[24px] text-center font-manrope font-normal",
+        "text-[18px] leading-[24px]  font-manrope font-normal",
         className
       )}
     >

@@ -6,6 +6,7 @@ import RegisterForm from "@/components/auth/RegisterForm";
 import TextH2 from "@/components/typography/TextH2";
 import TextP from "@/components/typography/TextP";
 import { Button } from "@/components/ui/button";
+import AuthCardHeader from "@/components/auth/AuthCardHeader";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -23,21 +24,11 @@ export default function RegisterPage() {
           "Expand Your Global Reach",
         ]}
       />
-
-      {/* Right Panel - scrollable */}
-      <div className="flex-1 h-screen overflow-y-auto px-6 flex items-start justify-center">
+      <div className="flex-1 h-screen min-h-0 overflow-y-auto px-6 flex items-start justify-center">
         <div className="w-full max-w-3xl space-y-4 px-12 py-12">
           {/* Back Button + Title */}
-          <div className="flex items-center space-x-3">
-            <Button
-              size="icon"
-              onClick={() => router.back()}
-              className="p-0 bg-black"
-            >
-              <ArrowLeft className="h-5 w-5 text-white" />
-            </Button>
-            <TextH2 className="font-bold text-left">Create Your Account</TextH2>
-          </div>
+
+          <AuthCardHeader title="Create Your Account" />
 
           <TextP className="text-left mb-6">
             Fill in your company details to get started.
