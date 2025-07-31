@@ -25,6 +25,8 @@ export const registerSchema = z.object({
   password: z.string().min(6),
   confirmPassword: z.string(),
   termsAccepted: z.boolean(),
+  branchCount: z.number().min(1),
+  costPerBranch: z.number().nonnegative(),
 });
 
 export type RegisterSchema = z.infer<typeof registerSchema>;

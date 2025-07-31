@@ -34,11 +34,9 @@ export default function LoginForm() {
     },
   });
 
-  const router = useRouter();
-
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
-      const res = await login(values);
+      await login(values);
       toast.success("Logged in successfully!");
       // router.push("/dashboard");
     } catch (error) {
@@ -55,7 +53,7 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
         <FormField
           control={form.control}
           name="email"

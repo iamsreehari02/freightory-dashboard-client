@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -18,16 +18,42 @@ import { AppButton } from "../shared/AppButton";
 import { RegisterSchema, registerSchema } from "@/schemas/registerSchema";
 import { toast } from "sonner";
 import { register } from "@/services/api/auth";
-import { Eye, EyeOff, Minus, Plus } from "lucide-react";
+import { Check, Minus, Plus } from "lucide-react";
 import { AxiosError } from "axios";
 import { AppDropdown } from "../shared/AppDropdown";
 import PasswordInput from "../form/PasswordInput";
 import PhoneInputField from "../form/PhoneInputField";
 import { Button } from "../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { cn, countryOptions, getUserCountryCode } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "../ui/command";
 
 export default function RegisterForm() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [branchCount, setBranchCount] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
+
+  useEffect(() => {
+    const detect = async () => {
+      const countryCode = await getUserCountryCode();
+      setDetectedCountry(countryCode?.toUpperCase() || null);
+    };
+    detect();
+  }, []);
 
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -44,15 +70,28 @@ export default function RegisterForm() {
       password: "",
       confirmPassword: "",
       termsAccepted: false,
+      branchCount: 1,
+      costPerBranch: 0,
     },
   });
 
   const freightType = form.watch("freightType");
+  const selectedCountry = form.watch("country");
   const showBranchCounter = freightType === "Freight Forwarder";
-  const totalAmount = branchCount * 50;
+
+  const isIndia = selectedCountry?.toLowerCase() === "india";
+
+  const pricePerBranch =
+    freightType === "Freight Forwarder" ? (isIndia ? 5000 : 50) : 0;
+
+  // const totalAmount = pricePerBranch * branchCount;
+
+  const totalAmount = pricePerBranch * branchCount;
 
   async function onSubmit(values: RegisterSchema) {
     try {
+      values.branchCount = showBranchCounter ? branchCount : 0;
+      values.costPerBranch = pricePerBranch;
       await register(values);
       toast.success("Registered successfully!");
     } catch (error) {
@@ -67,7 +106,6 @@ export default function RegisterForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Company Name */}
           <FormField
             control={form.control}
             name="companyName"
@@ -82,7 +120,6 @@ export default function RegisterForm() {
             )}
           />
 
-          {/* Contact Person */}
           <FormField
             control={form.control}
             name="contactPerson"
@@ -97,7 +134,6 @@ export default function RegisterForm() {
             )}
           />
 
-          {/* Phone */}
           <FormField
             control={form.control}
             name="phone"
@@ -108,14 +144,12 @@ export default function RegisterForm() {
                     label="Phone"
                     value={field.value}
                     onChange={field.onChange}
-                    // error={form.formState.errors.phone?.message}
                   />
                 </FormControl>
               </FormItem>
             )}
           />
 
-          {/* Email */}
           <FormField
             control={form.control}
             name="email"
@@ -134,7 +168,6 @@ export default function RegisterForm() {
             )}
           />
 
-          {/* Website */}
           <FormField
             control={form.control}
             name="website"
@@ -154,7 +187,6 @@ export default function RegisterForm() {
             )}
           />
 
-          {/* Head Office Address */}
           <FormField
             control={form.control}
             name="headOfficeAddress"
@@ -173,22 +205,61 @@ export default function RegisterForm() {
             )}
           />
 
-          {/* Country */}
           <FormField
             control={form.control}
             name="country"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Country</FormLabel>
-                <FormControl>
-                  <Input placeholder="Country of registration" {...field} />
-                </FormControl>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full justify-between rounded-md h-10 px-3 font-light"
+                      >
+                        {field.value
+                          ? countryOptions.find((c) => c.value === field.value)
+                              ?.label
+                          : "Select country"}
+                        <Check className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search country..." />
+                      <CommandEmpty>No country found.</CommandEmpty>
+                      <CommandGroup>
+                        {countryOptions.map((country) => (
+                          <CommandItem
+                            key={country.value}
+                            onSelect={() => {
+                              form.setValue("country", country.value);
+                              setOpen(false);
+                            }}
+                          >
+                            {country.label}
+                            <Check
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                field.value === country.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Pin Code */}
           <FormField
             control={form.control}
             name="pinCode"
@@ -203,7 +274,6 @@ export default function RegisterForm() {
             )}
           />
 
-          {/* Freight Type */}
           <div className="col-span-2">
             <FormField
               control={form.control}
@@ -232,52 +302,48 @@ export default function RegisterForm() {
           {showBranchCounter && (
             <div className="col-span-2 flex flex-col gap-2">
               <div className="flex flex-row justify-between items-center w-full">
-                {/* Left label + subtext */}
                 <div className="flex flex-col">
                   <label className="text-base font-semibold">
                     Number of Branches
                   </label>
                   <p className="text-sm text-muted-foreground">
-                    $50 per branch
+                    {isIndia ? "₹5000" : "$50"} per branch
                   </p>
                 </div>
 
-                {/* Counter + total */}
-                <div className="flex items-center gap-6">
-                  {/* Counter */}
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="w-9 h-9"
-                      onClick={() =>
-                        setBranchCount((prev) => Math.max(prev - 1, 1))
-                      }
-                    >
-                      <Minus className="w-5 h-5" />
-                    </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="w-9 h-9"
+                    onClick={() =>
+                      setBranchCount((prev) => Math.max(prev - 1, 1))
+                    }
+                  >
+                    <Minus className="w-5 h-5" />
+                  </Button>
 
-                    <span className="text-lg font-semibold w-8 text-center">
-                      {branchCount}
-                    </span>
+                  <span className="text-lg font-semibold w-8 text-center">
+                    {branchCount}
+                  </span>
 
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="w-9 h-9"
-                      onClick={() => setBranchCount((prev) => prev + 1)}
-                    >
-                      <Plus className="w-5 h-5" />
-                    </Button>
-                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="w-9 h-9"
+                    onClick={() => setBranchCount((prev) => prev + 1)}
+                  >
+                    <Plus className="w-5 h-5" />
+                  </Button>
 
-                  {/* Total */}
                   <div className="text-base font-medium">
-                    Total Amount:{" "}
+                    Total:{" "}
                     <span className="font-bold text-primary">
-                      ${totalAmount}
+                      {isIndia
+                        ? `₹${totalAmount.toLocaleString()}`
+                        : `$${totalAmount}`}
                     </span>
                   </div>
                 </div>
@@ -285,7 +351,6 @@ export default function RegisterForm() {
             </div>
           )}
 
-          {/* Passwords */}
           <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -320,7 +385,6 @@ export default function RegisterForm() {
           </div>
         </div>
 
-        {/* Terms and Conditions */}
         <div className="flex items-start space-x-2">
           <Checkbox
             checked={termsAccepted}
@@ -344,7 +408,6 @@ export default function RegisterForm() {
           </label>
         </div>
 
-        {/* Submit Button */}
         <AppButton
           type="submit"
           loading={form.formState.isSubmitting}
