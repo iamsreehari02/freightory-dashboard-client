@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { passwordSchema } from "./password";
 
 export const registerSchema = z.object({
   companyName: z.string().min(2),
@@ -13,7 +14,10 @@ export const registerSchema = z.object({
     .refine((val) => !val || /^https?:\/\/.+\..+/.test(val), {
       message: "Invalid URL",
     }),
-  headOfficeAddress: z.string().min(5),
+  headOfficeAddress: z
+    .string()
+    .trim()
+    .min(1, "Head Office Address is required"),
   country: z.string().min(2),
   pinCode: z.string().min(4),
   freightType: z
@@ -22,8 +26,8 @@ export const registerSchema = z.object({
     .refine((val): val is "Freight Forwarder" | "NVOCC" => !!val, {
       message: "Please select freight type",
     }),
-  password: z.string().min(6),
-  confirmPassword: z.string(),
+  password: passwordSchema,
+  confirmPassword: passwordSchema,
   termsAccepted: z.boolean(),
   branchCount: z.number().min(1),
   costPerBranch: z.number().nonnegative(),

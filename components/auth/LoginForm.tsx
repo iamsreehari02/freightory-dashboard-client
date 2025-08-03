@@ -13,19 +13,21 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AppButton } from "../shared/AppButton";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { login } from "@/services/api/auth";
 import { ActionText } from "../shared/ActionText";
 import TextP from "../typography/TextP";
 import { AxiosError } from "axios";
 import PasswordInput from "../form/PasswordInput";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string().min(1, "Password is required"),
 });
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -38,7 +40,7 @@ export default function LoginForm() {
     try {
       await login(values);
       toast.success("Logged in successfully!");
-      // router.push("/dashboard");
+      router.push("/dashboard");
     } catch (error) {
       const err = error as AxiosError<{ message?: string }>;
 

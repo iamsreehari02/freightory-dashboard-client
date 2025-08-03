@@ -148,3 +148,35 @@ export const countryOptions = [
   { value: "united states", label: "United States" },
   { value: "vietnam", label: "Vietnam" },
 ];
+
+export const paymentOptions = [
+  {
+    key: "online",
+    title: "Online Payment",
+    description: "Pay instantly using UPI, Card, or Netbanking.",
+    icon: "/assets/icons/creditcard.svg",
+    buttonLabel: "Pay Online",
+    points: [
+      "Instant confirmation",
+      "All digital methods supported",
+      "Secure and fast",
+    ],
+  },
+  {
+    key: "offline",
+    title: "Offline Bank Transfer",
+    description: "Transfer the payment directly to our bank account manually.",
+    icon: "/assets/icons/bank.svg",
+    buttonLabel: "Bank Transfer",
+    points: [
+      "No internet banking? Use this",
+      "Manual transfer instructions",
+      "Confirmed after verification",
+    ],
+  },
+];
+
+export function formatNumber(value: number | string): string {
+  const num = typeof value === "string" ? parseFloat(value) : value;
+  return num.toLocaleString("en-US");
+}

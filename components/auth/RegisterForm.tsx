@@ -24,13 +24,6 @@ import { AppDropdown } from "../shared/AppDropdown";
 import PasswordInput from "../form/PasswordInput";
 import PhoneInputField from "../form/PhoneInputField";
 import { Button } from "../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { cn, countryOptions, getUserCountryCode } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
@@ -40,12 +33,15 @@ import {
   CommandInput,
   CommandItem,
 } from "../ui/command";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [branchCount, setBranchCount] = useState(1);
   const [open, setOpen] = useState(false);
   const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const detect = async () => {
@@ -79,14 +75,26 @@ export default function RegisterForm() {
   const selectedCountry = form.watch("country");
   const showBranchCounter = freightType === "Freight Forwarder";
 
-  const isIndia = selectedCountry?.toLowerCase() === "india";
+  const isIndia =
+    selectedCountry?.toLowerCase() === "india" ||
+    (!selectedCountry && detectedCountry?.toLowerCase() === "in");
+
+  const selectedFreightType = freightType?.toLowerCase();
+
+  const baseAmount = (() => {
+    if (!selectedFreightType) return 0;
+    if (selectedFreightType === "freight forwarder")
+      return isIndia ? 10000 : 100;
+    if (selectedFreightType === "nvocc") return isIndia ? 20000 : 200;
+    return 0;
+  })();
 
   const pricePerBranch =
     freightType === "Freight Forwarder" ? (isIndia ? 5000 : 50) : 0;
 
   // const totalAmount = pricePerBranch * branchCount;
 
-  const totalAmount = pricePerBranch * branchCount;
+  const totalAmount = baseAmount + pricePerBranch * branchCount;
 
   async function onSubmit(values: RegisterSchema) {
     try {
@@ -94,6 +102,8 @@ export default function RegisterForm() {
       values.costPerBranch = pricePerBranch;
       await register(values);
       toast.success("Registered successfully!");
+      // router.push("/payment");
+      router.push("/dashboard");
     } catch (error) {
       const err = error as AxiosError<{ message?: string }>;
       const message =
@@ -227,7 +237,11 @@ export default function RegisterForm() {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
+                  <PopoverContent
+                    className="p-0 max-h-60 overflow-y-auto "
+                    align="start"
+                    sideOffset={4}
+                  >
                     <Command>
                       <CommandInput placeholder="Search country..." />
                       <CommandEmpty>No country found.</CommandEmpty>
@@ -299,8 +313,18 @@ export default function RegisterForm() {
             />
           </div>
 
+          {freightType && (
+            <div className="col-span-2 flex justify-between items-center">
+              <div className="text-base font-semibold">Freight Charge</div>
+              <div className="font-bold text-primary">
+                {isIndia ? `₹${baseAmount.toLocaleString()}` : `$${baseAmount}`}
+              </div>
+            </div>
+          )}
+
           {showBranchCounter && (
-            <div className="col-span-2 flex flex-col gap-2">
+            <div className="col-span-2 flex flex-col gap-4">
+              {/* Branch Counter */}
               <div className="flex flex-row justify-between items-center w-full">
                 <div className="flex flex-col">
                   <label className="text-base font-semibold">

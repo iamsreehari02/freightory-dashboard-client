@@ -30,7 +30,7 @@ export default function AuthCardHeader({
             <ArrowLeft className="h-5 w-5 text-white" />
           </Button>
         )}
-        <TextH1 className="text-2xl font-semibold">{title}</TextH1>
+        <TextH1 className="font-semibold">{title}</TextH1>
       </div>
 
       {description && <TextP className="text-sm">{description}</TextP>}

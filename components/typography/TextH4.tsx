@@ -11,7 +11,7 @@ export default function TextH4({
   return (
     <h4
       className={cn(
-        "text-[28px] leading-[32px] text-center font-clash font-medium",
+        "text-[28px] leading-[32px] text-center font-clash font-bold",
         className
       )}
     >
