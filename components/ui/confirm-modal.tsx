@@ -9,12 +9,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ReactNode } from "react";
 
 interface ConfirmModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
-  description?: string;
+  description?: ReactNode;
   confirmText?: string;
   confirmClassName?: string;
   onConfirm: () => void | Promise<void>;

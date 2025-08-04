@@ -17,7 +17,7 @@ function Card({ className, size = "md", ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-6 shadow-sm w-full",
+        "bg-card text-card-foreground flex flex-col gap-6 rounded-md border p-6 shadow-sm w-full",
         sizeClasses[size],
         className
       )}

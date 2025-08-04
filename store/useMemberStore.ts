@@ -1,20 +1,9 @@
-import { getAllMembers } from "@/services/api/members";
+import { Member } from "@/models/member";
+import {
+  getAllMembers,
+  getMemberById as fetchMemberByIdApi,
+} from "@/services/api/members";
 import { create } from "zustand";
-
-export type Member = {
-  _id: string;
-  company: {
-    name: string;
-    country: string;
-    freightType: "freight_forwarder" | "nvocc";
-  } | null;
-  email: string;
-  status: string;
-  phone: string;
-  role: "admin" | "freight_forwarder" | "nvocc";
-  createdAt: string;
-  updatedAt: string;
-};
 
 type MemberState = {
   allMembers: Member[];
@@ -25,9 +14,16 @@ type MemberState = {
 
   fetchAllMembers: () => Promise<void>;
   fetchLatestMembers: () => Promise<void>;
+  getMemberById: (id: string) => Member | undefined;
+  fetchMemberById: (id: string) => Promise<Member | null>;
+  mutateMember: (
+    action: "delete" | "suspend",
+    userId: string,
+    data?: { status?: string }
+  ) => void;
 };
 
-export const useMemberStore = create<MemberState>((set) => ({
+export const useMemberStore = create<MemberState>((set, get) => ({
   allMembers: [],
   latestMembers: [],
   isLoadingAll: false,
@@ -48,11 +44,58 @@ export const useMemberStore = create<MemberState>((set) => ({
   fetchLatestMembers: async () => {
     try {
       set({ isLoadingLatest: true, error: null });
-      const res = await getAllMembers(true); // true to get latest members
+      const res = await getAllMembers(true); // latest = true
       set({ latestMembers: res, isLoadingLatest: false });
     } catch (err) {
       console.error(err);
       set({ error: "Failed to fetch latest members", isLoadingLatest: false });
     }
   },
+
+  getMemberById: (id) => {
+    return get().allMembers.find((m) => m._id === id);
+  },
+
+  fetchMemberById: async (id) => {
+    try {
+      const member = await fetchMemberByIdApi(id);
+      if (!member) return null;
+
+      // Optional: update the store if not already there
+      const exists = get().allMembers.some((m) => m._id === id);
+      if (!exists) {
+        set((state) => ({
+          allMembers: [...state.allMembers, member],
+        }));
+      }
+
+      return member;
+    } catch (err) {
+      console.error("Failed to fetch member by ID", err);
+      return null;
+    }
+  },
+
+  mutateMember: (
+    action: "delete" | "suspend",
+    userId: string,
+    data?: { status?: string }
+  ) =>
+    set((state) => {
+      if (action === "delete") {
+        return {
+          allMembers: state.allMembers.filter((m) => m._id !== userId),
+        };
+      }
+
+      if (action === "suspend" && data?.status) {
+        return {
+          allMembers: state.allMembers.map((m) =>
+            m._id === userId ? { ...m, status: data.status! } : m
+          ),
+        };
+      }
+
+      return {};
+    }),
 }));
