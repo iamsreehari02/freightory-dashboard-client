@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
 import { DetailRow } from "../ui/detail-row";
 import { Member } from "@/models/member";
-import { formatNumber } from "@/lib/utils";
+import { formatCurrency, formatNumber } from "@/lib/utils";
 
 type Props = {
   member: Member;
@@ -12,6 +12,10 @@ export function FinancialInfoCard({ member }: Props) {
   const company = member.company;
 
   if (!company) return null;
+
+  const currencyCode = company.currencyCode || "USD";
+
+  console.log("currency code", currencyCode);
 
   return (
     <Card size="lg">
@@ -24,20 +28,21 @@ export function FinancialInfoCard({ member }: Props) {
         <DetailRow
           icon={DollarSign}
           label="Cost Per Branch"
-          value={formatNumber(company.costPerBranch)}
-          valueClassName="font-medium text-green-600"
+          value={formatCurrency(company.costPerBranch, currencyCode)}
         />
         <DetailRow
           icon={DollarSign}
           label="Base Registration Fee"
-          value={formatCurrency(company.baseRegistrationFee)}
-          valueClassName="text-green-600"
+          value={formatCurrency(company.baseRegistrationFee ?? 0, currencyCode)}
         />
         <DetailRow
           icon={DollarSign}
           label="Total Registration Cost"
-          value={formatCurrency(company.totalRegistrationCost)}
-          valueClassName="text-green-700 font-semibold"
+          value={formatCurrency(
+            company.totalRegistrationCost ?? 0,
+            currencyCode
+          )}
+          valueClassName=" font-bold"
         />
       </CardContent>
     </Card>

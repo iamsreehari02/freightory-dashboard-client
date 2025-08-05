@@ -13,6 +13,7 @@ import { FinancialInfoCard } from "./FinancialInfoCard";
 import { useMemberStore } from "@/store/useMemberStore";
 import { getRoleBadge } from "@/lib/getBadge";
 import { Member } from "@/models/member";
+import { CompanyInfoCard } from "./CompanyInfoCard";
 
 type Props = {
   memberId: string | null;
@@ -48,6 +49,8 @@ export function MemberDetailSheet({ memberId, open, onOpenChange }: Props) {
 
             <div className="flex-1 overflow-y-auto p-5 pt-4 space-y-4">
               <UserInfoCard member={member} />
+              {member.company && <CompanyInfoCard company={member.company} />}
+
               <FinancialInfoCard member={member} />
             </div>
           </>

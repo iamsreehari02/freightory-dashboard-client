@@ -1,14 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {
-  Mail,
-  Phone,
-  Shield,
-  User,
-  Calendar,
-  Hash,
-  LocateIcon,
-  MapPin,
-} from "lucide-react";
+import { Mail, Phone, Hash, Calendar } from "lucide-react";
 import { DetailRow } from "../ui/detail-row";
 import { getRoleBadge, getStatusBadge } from "@/lib/getBadge";
 import { Member } from "@/models/member";
@@ -22,7 +13,7 @@ export function UserInfoCard({ member }: Props) {
     <Card size="xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base text-foreground -mb-4">
-          User Information
+          User Details
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1">
@@ -33,12 +24,6 @@ export function UserInfoCard({ member }: Props) {
           valueClassName="font-medium"
         />
         <DetailRow icon={Phone} label="Phone" value={member.phone} />
-        <DetailRow
-          icon={MapPin}
-          label="Address"
-          value={member.company?.headOfficeAddress}
-        />
-
         <DetailRow
           icon={Hash}
           label="Status"

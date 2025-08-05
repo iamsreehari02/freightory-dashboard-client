@@ -10,9 +10,8 @@ export type Company = {
   costPerBranch: number;
   baseRegistrationFee?: number;
   totalRegistrationCost?: number;
+  currencyCode: string;
 };
-
-// 🧠 Selectors for company
 
 export const getCompanyDisplayName = (company: Company | null) =>
   company?.name || "—";

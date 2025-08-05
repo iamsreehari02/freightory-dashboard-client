@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useMemberStore } from "@/store/useMemberStore";
 import { DataTable } from "@/components/shared/DataTable";
 import PageHeader from "@/components/PageHeader";
-import { Member } from "@/store/useMemberStore";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash } from "lucide-react";
 import { toast } from "sonner";
@@ -12,6 +11,7 @@ import ActionsDropdown from "@/components/shared/ActionsDropdown";
 import { deleteUser, suspendUser } from "@/services/api/members";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { MemberDetailSheet } from "@/components/members/MemberDetailSheet";
+import { Member } from "@/models/member";
 
 export default function MembersPage() {
   const { allMembers, fetchAllMembers, isLoadingAll, mutateMember } =
@@ -167,7 +167,7 @@ export default function MembersPage() {
 
         return (
           <ActionsDropdown
-            member={user}
+            status={user.status}
             onView={() => setViewMemberId(user._id)}
             onEdit={() => console.log("Edit", user)}
             onSuspend={() => {
