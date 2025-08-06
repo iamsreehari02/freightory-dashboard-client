@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import "flag-icons/css/flag-icons.min.css";
 import { Toaster } from "sonner";
+import { AuthInitializer } from "@/components/providers/AuthInitializer";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={` font-sans antialiased`}>
         {children}
         <Toaster richColors position="top-right" />
+        <AuthInitializer />
       </body>
     </html>
   );

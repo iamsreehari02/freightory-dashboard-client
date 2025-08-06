@@ -1,68 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
-import { StatCard } from "@/components/ui/stat-card";
-import { dashboardStatsConfig } from "@/lib/dashboardStats";
-import { getDashboardStats } from "@/services/api/dashboard";
-import { DataTableCard } from "@/components/shared/DataTableCard";
-import { recentMemberColumns } from "@/components/tables/members/RecentMembersColumns";
-import { useMemberStore } from "@/store/useMemberStore";
-import { useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
+import AdminDashboard from "@/components/dashboards/AdminDashboard";
+import { GlobalLoading } from "@/components/shared/GlobalLoading";
 
-export default function DashboardHome() {
-  const { latestMembers, isLoadingLatest, fetchLatestMembers } =
-    useMemberStore();
+export default function DashboardPage() {
+  const { user, isLoading } = useAuthStore();
 
-  const [counts, setCounts] = useState<Record<string, number>>({});
-  const [loadingStats, setLoadingStats] = useState(true);
+  const userRole = user?.role;
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoadingStats(true);
-        const data = await getDashboardStats();
-        setCounts(data);
-      } catch (error) {
-        console.error("Failed to fetch dashboard stats:", error);
-      } finally {
-        setLoadingStats(false);
-      }
-    };
+  if (isLoading) return <GlobalLoading />;
 
-    fetchStats();
-    fetchLatestMembers();
-  }, []);
+  if (userRole === "admin") return <AdminDashboard />;
+  if (userRole === "freight_forwarder") return <p>Freight forwarder</p>;
+  if (userRole === "nvocc") return <p>Nvocc</p>;
 
-  return (
-    <div className="space-y-6 ">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {dashboardStatsConfig.map((stat, index) => (
-          <StatCard
-            key={index}
-            title={stat.title}
-            count={counts[stat.key] ?? 0}
-            icon={stat.icon}
-            iconBg={stat.iconBg}
-            loading={loadingStats}
-          />
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <DataTableCard
-          title="Recent Members"
-          columns={recentMemberColumns}
-          data={latestMembers}
-          loading={isLoadingLatest}
-        />
-
-        <DataTableCard
-          title="Recent Transactions"
-          columns={recentMemberColumns}
-          data={latestMembers}
-          loading={isLoadingLatest}
-        />
-      </div>
-    </div>
-  );
+  return <div className="text-center text-red-500">Unauthorized access</div>;
 }

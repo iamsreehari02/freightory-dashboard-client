@@ -7,9 +7,6 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
-  const { user } = useAuthStore();
-
-  console.log("user logged in ", user);
 
   return (
     <AuthProvider>

@@ -12,6 +12,7 @@ import { deleteUser, suspendUser } from "@/services/api/members";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { MemberDetailSheet } from "@/components/members/MemberDetailSheet";
 import { Member } from "@/models/member";
+import { getFlagImageUrl } from "@/lib/country";
 
 export default function MembersPage() {
   const { allMembers, fetchAllMembers, isLoadingAll, mutateMember } =
@@ -127,8 +128,25 @@ export default function MembersPage() {
     {
       header: "Country",
       accessorKey: "company.country",
-      cell: ({ row }: any) => row.original.company?.country ?? "—",
+      cell: ({ row }: any) => {
+        const country = row.original.company?.country;
+        const flagUrl = getFlagImageUrl(country ?? "");
+
+        return (
+          <div className="flex items-center gap-2">
+            {flagUrl && (
+              <img
+                src={flagUrl}
+                alt={country}
+                className="w-5 h-4  border object-cover"
+              />
+            )}
+            <span>{country ?? "—"}</span>
+          </div>
+        );
+      },
     },
+
     {
       header: "Member Type",
       accessorKey: "role",

@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import ResetPassword from "@/components/auth/ResetPassword";
+import { GlobalLoading } from "@/components/shared/GlobalLoading";
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="text-center p-6">Loading...</div>}>
+    <Suspense fallback={<GlobalLoading />}>
       <ResetPassword />
     </Suspense>
   );

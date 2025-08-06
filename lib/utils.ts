@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { format, formatDistanceToNow } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -287,3 +288,11 @@ export function formatCurrency(
     minimumFractionDigits: 2,
   }).format(amount / 100);
 }
+
+export const formatDate = (dateString: string): string => {
+  return format(new Date(dateString), "dd MMM yyyy");
+};
+
+export const formatTimeAgo = (dateString: string): string => {
+  return formatDistanceToNow(new Date(dateString), { addSuffix: true });
+};

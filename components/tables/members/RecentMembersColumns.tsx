@@ -1,6 +1,7 @@
+import { getFlagImageUrl } from "@/lib/country";
+import { Member } from "@/models/member";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Member } from "@/store/useMemberStore";
 
 export const recentMemberColumns: ColumnDef<Member>[] = [
   {
@@ -8,10 +9,27 @@ export const recentMemberColumns: ColumnDef<Member>[] = [
     accessorKey: "company.name",
     cell: ({ row }) => <span>{row.original.company?.name ?? "—"}</span>,
   },
+
   {
     header: "Country",
     accessorKey: "company.country",
-    cell: ({ row }) => <span>{row.original.company?.country ?? "—"}</span>,
+    cell: ({ row }) => {
+      const country = row.original.company?.country;
+      const flagUrl = getFlagImageUrl(country ?? "");
+
+      return (
+        <span className="flex items-center gap-2">
+          {flagUrl && (
+            <img
+              src={flagUrl}
+              alt={country}
+              className="w-5 h-3 object-cover border"
+            />
+          )}
+          {country ?? "—"}
+        </span>
+      );
+    },
   },
   {
     header: "Joined",

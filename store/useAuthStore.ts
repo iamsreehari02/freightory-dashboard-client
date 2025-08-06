@@ -7,7 +7,7 @@ interface User {
   email: string;
   phone: string;
   companyId: string;
-  role: "admin" | "freight_forwarder" | "nvooc";
+  role: "admin" | "freight_forwarder" | "nvocc";
 }
 
 interface Company {
@@ -18,7 +18,7 @@ interface Company {
   headOfficeAddress: string;
   country: string;
   pinCode: string;
-  freightType: string; // 'freight_forwarder' or 'nvooc'
+  freightType: string;
   costPerBranch: number;
   baseRegistrationFee: number;
   totalRegistrationCost: number;
@@ -31,10 +31,10 @@ interface AuthState {
   isLoading: boolean;
 
   // Computed
-  companyType: "freight_forwarder" | "nvooc" | null;
+  companyType: "freight_forwarder" | "nvocc" | null;
   isFreightForwarder: boolean;
   isNVOCC: boolean;
-  userRole: "admin" | "freight_forwarder" | "nvooc" | null;
+  userRole: "admin" | "freight_forwarder" | "nvocc" | null;
 
   // Actions
   login: (userData: { user: User; company: Company }) => void;
@@ -59,7 +59,7 @@ export const useAuthStore = create<AuthState>()(
         if (!company) return null;
         return company.freightType.toLowerCase().replace(/\s+/g, "_") as
           | "freight_forwarder"
-          | "nvooc";
+          | "nvocc";
       },
 
       get isFreightForwarder() {
@@ -67,10 +67,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       get isNVOCC() {
-        return get().companyType === "nvooc";
+        return get().companyType === "nvocc";
       },
 
-      // ✅ Computed: User Role
       get userRole() {
         return get().user?.role ?? null;
       },

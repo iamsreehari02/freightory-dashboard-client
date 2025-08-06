@@ -8,6 +8,7 @@ import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { getAllContainers } from "@/services/api/containers";
 import { Container } from "@/models/container";
 import ActionsDropdown from "@/components/shared/ActionsDropdown";
+import { getFlagImageUrl } from "@/lib/country";
 
 export default function ContainersPage() {
   const [containers, setContainers] = useState<Container[]>([]);
@@ -72,7 +73,23 @@ export default function ContainersPage() {
     {
       header: "Country",
       accessorKey: "company.country",
-      cell: ({ row }: any) => row.original.country ?? "—",
+      cell: ({ row }: any) => {
+        const country = row.original.country;
+        const flagUrl = getFlagImageUrl(country ?? "");
+
+        return (
+          <div className="flex items-center gap-2">
+            {flagUrl && (
+              <img
+                src={flagUrl}
+                alt={country}
+                className="w-5 h-4  border object-cover"
+              />
+            )}
+            <span>{country ?? "—"}</span>
+          </div>
+        );
+      },
     },
     {
       header: "Status",
