@@ -7,7 +7,7 @@ import { getDashboardStats } from "@/services/api/dashboard";
 import { DataTableCard } from "@/components/shared/DataTableCard";
 import { recentMemberColumns } from "@/components/tables/members/RecentMembersColumns";
 import { useMemberStore } from "@/store/useMemberStore";
-import { ContainerActivityCard } from "@/components/cards/ContainerActivityCard";
+import { ContainerActivityTimelineCard } from "../cards/ContainerActivityTimelineCard";
 
 export default function AdminDashboard() {
   const { latestMembers, isLoadingLatest, fetchLatestMembers } =
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
 
       {/* Container Activity + Spacer */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ContainerActivityCard />
+        <ContainerActivityTimelineCard />
 
         <div className="h-full bg-muted rounded-xl flex items-center justify-center text-muted-foreground text-sm p-4">
           {/* Optional content or placeholder */}

@@ -1,4 +1,6 @@
 import { api } from "@/lib/api";
+import { Company } from "@/models/company";
+import { Member } from "@/models/member";
 import { RegisterSchema } from "@/schemas/registerSchema";
 
 export const login = (data: { email: string; password: string }) => {
@@ -43,4 +45,18 @@ export const resetPassword = async ({
 export const getMe = async () => {
   const response = await api.get("/auth/me");
   return response.data;
+};
+
+export const updateUserAndCompany = async ({
+  userData,
+  companyData,
+}: {
+  userData?: Partial<Member>;
+  companyData?: Partial<Company>;
+}) => {
+  const res = await api.patch("/auth", {
+    userData,
+    companyData,
+  });
+  return res.data;
 };

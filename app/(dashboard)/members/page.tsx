@@ -13,6 +13,7 @@ import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { MemberDetailSheet } from "@/components/members/MemberDetailSheet";
 import { Member } from "@/models/member";
 import { getFlagImageUrl } from "@/lib/country";
+import { ColumnDef } from "@tanstack/react-table";
 
 export default function MembersPage() {
   const { allMembers, fetchAllMembers, isLoadingAll, mutateMember } =
@@ -119,16 +120,16 @@ export default function MembersPage() {
     };
   };
 
-  const columns = [
+  const columns: ColumnDef<Member>[] = [
     {
       header: "Company",
       accessorKey: "company.name",
-      cell: ({ row }: any) => <span>{row.original.company?.name ?? "—"}</span>,
+      cell: ({ row }) => <span>{row.original.company?.name ?? "—"}</span>,
     },
     {
       header: "Country",
       accessorKey: "company.country",
-      cell: ({ row }: any) => {
+      cell: ({ row }) => {
         const country = row.original.company?.country;
         const flagUrl = getFlagImageUrl(country ?? "");
 
@@ -150,7 +151,7 @@ export default function MembersPage() {
     {
       header: "Member Type",
       accessorKey: "role",
-      cell: ({ row }: any) => (
+      cell: ({ row }) => (
         <span className="capitalize px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-medium">
           {row.original.role.replace("_", " ")}
         </span>
@@ -159,13 +160,12 @@ export default function MembersPage() {
     {
       header: "Joined",
       accessorKey: "createdAt",
-      cell: ({ row }: any) =>
-        new Date(row.original.createdAt).toLocaleDateString(),
+      cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
     },
     {
       header: "Status",
       accessorKey: "status",
-      cell: ({ row }: any) => (
+      cell: ({ row }) => (
         <span
           className={`text-sm px-2 py-1 rounded-sm ${
             row.original.status === "active"
@@ -180,7 +180,7 @@ export default function MembersPage() {
     {
       header: "",
       id: "actions",
-      cell: ({ row }: any) => {
+      cell: ({ row }) => {
         const user = row.original as Member;
 
         return (

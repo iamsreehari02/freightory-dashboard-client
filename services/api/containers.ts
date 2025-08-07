@@ -9,3 +9,8 @@ export const getAllContainerLogs = async () => {
   const response = await api.get("/containers/logs");
   return response.data;
 };
+
+export const getLatestContainers = async () => {
+  const response = await api.get("/containers/latest");
+  return response.data;
+};

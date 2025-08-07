@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import { GlobalLoading } from "@/components/shared/GlobalLoading";
+import NvoccDashboard from "@/components/dashboards/NvoccDashboard";
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuthStore();
@@ -13,7 +14,7 @@ export default function DashboardPage() {
 
   if (userRole === "admin") return <AdminDashboard />;
   if (userRole === "freight_forwarder") return <p>Freight forwarder</p>;
-  if (userRole === "nvocc") return <p>Nvocc</p>;
+  if (userRole === "nvocc") return <NvoccDashboard />;
 
   return <div className="text-center text-red-500">Unauthorized access</div>;
 }

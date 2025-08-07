@@ -30,7 +30,7 @@ export function StatCard({
             <Skeleton className="h-6 w-16 rounded" />
           ) : (
             <TextP className="font-clash font-bold">
-              {formatNumber(count)}
+              {typeof count === "number" ? formatNumber(count) : count}
             </TextP>
           )}
         </div>

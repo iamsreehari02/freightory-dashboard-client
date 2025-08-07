@@ -22,10 +22,34 @@ export const getStatusBadge = (status: string | null | undefined) => {
           Inactive
         </Badge>
       );
+    case "available":
+      return (
+        <Badge className="bg-[#C7FAE6] text-green-600 hover:bg-[#C7FAE6]">
+          Available
+        </Badge>
+      );
+    case "unavailable":
+      return (
+        <Badge className="bg-[#FDE2E1] text-red-600 hover:bg-[#FDE2E1]">
+          Unavailable
+        </Badge>
+      );
+    case "pending":
+      return (
+        <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+          Pending
+        </Badge>
+      );
+    case "deleted":
+      return (
+        <Badge className="bg-red-200 text-red-800 hover:bg-red-200">
+          Deleted
+        </Badge>
+      );
     default:
       return (
         <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">
-          Unknown
+          {status ?? "Unknown"}
         </Badge>
       );
   }

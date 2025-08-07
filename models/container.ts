@@ -14,6 +14,10 @@ export type Container = {
   company: Company;
   createdAt: string;
   updatedAt: string;
+  port: string;
+  country: string;
+  unitsAvailable: number;
+  availableFrom: string;
 };
 
 export const getContainerDisplayName = (container: Container | null) =>

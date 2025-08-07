@@ -1,18 +1,33 @@
 "use client";
 
 import { useEffect } from "react";
-import clsx from "clsx";
 import PageHeader from "../PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { useContainerLogStore } from "@/store/useContainerLogStore";
 import { formatTimeAgo } from "@/lib/utils";
+import { Plus, Minus, Undo2, X } from "lucide-react";
 
-const actionColors: Record<string, { dot: string; border: string }> = {
-  created: { dot: "bg-green-500", border: "border-green-500" },
-  removed: { dot: "bg-red-500", border: "border-red-500" },
-  updated: { dot: "bg-yellow-500", border: "border-yellow-500" },
-  inactivated: { dot: "bg-pink-500", border: "border-pink-500" },
-  default: { dot: "bg-blue-500", border: "border-blue-500" },
+const actionIcons: Record<string, { icon: React.ReactNode; bg: string }> = {
+  created: {
+    icon: <Plus className="h-4 w-4 text-green-600" />,
+    bg: "bg-green-100",
+  },
+  removed: {
+    icon: <Minus className="h-4 w-4 text-red-600" />,
+    bg: "bg-red-100",
+  },
+  updated: {
+    icon: <Undo2 className="h-4 w-4 text-yellow-600" />,
+    bg: "bg-yellow-100",
+  },
+  inactivated: {
+    icon: <X className="h-4 w-4 text-pink-600" />,
+    bg: "bg-pink-100",
+  },
+  default: {
+    icon: <Plus className="h-4 w-4 text-gray-600" />,
+    bg: "bg-gray-100",
+  },
 };
 
 export const ContainerActivityCard = () => {
@@ -41,20 +56,20 @@ export const ContainerActivityCard = () => {
       <CardContent className="space-y-4">
         <PageHeader title="Container Activity Timeline" />
         <div className="space-y-3">
-          {logs.slice(0, 5).map((log, index: number) => {
-            const { dot, border } =
-              actionColors[log.action] || actionColors["default"];
+          {logs.slice(0, 5).map((log) => {
+            const { icon, bg } =
+              actionIcons[log.action] || actionIcons["default"];
 
             return (
               <div
                 key={log._id}
-                className={clsx(
-                  "bg-muted rounded-md p-4 flex justify-between items-start shadow-sm border-l-4",
-                  border
-                )}
+                className="bg-white rounded-md p-4 flex justify-between items-start shadow-sm border"
               >
-                <div className="flex items-center space-x-2">
-                  <span className={clsx("h-2 w-2 rounded-full ", dot)} />
+                <div className="flex items-center space-x-3">
+                  {/* Icon with round bg */}
+                  <div className={`p-2 rounded-full ${bg}`}>{icon}</div>
+
+                  {/* Message */}
                   <div>
                     <p className="text-sm font-medium">
                       {log.message}{" "}

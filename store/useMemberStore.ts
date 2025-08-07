@@ -23,6 +23,9 @@ type MemberState = {
   ) => void;
 };
 
+const isValidStatus = (status: string): status is "active" | "suspended" =>
+  status === "active" || status === "suspended";
+
 export const useMemberStore = create<MemberState>((set, get) => ({
   allMembers: [],
   latestMembers: [],
@@ -88,10 +91,12 @@ export const useMemberStore = create<MemberState>((set, get) => ({
         };
       }
 
-      if (action === "suspend" && data?.status) {
+      if (action === "suspend" && data?.status && isValidStatus(data.status)) {
+        const newStatus: Member["status"] = data.status;
+
         return {
           allMembers: state.allMembers.map((m) =>
-            m._id === userId ? { ...m, status: data.status! } : m
+            m._id === userId ? { ...m, status: newStatus } : m
           ),
         };
       }

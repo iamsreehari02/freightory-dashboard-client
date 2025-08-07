@@ -2,6 +2,7 @@ export type Company = {
   _id: string;
   name: string;
   contactPerson: string;
+  companyName: string;
   website: string;
   headOfficeAddress: string;
   country: string;
@@ -11,6 +12,7 @@ export type Company = {
   baseRegistrationFee?: number;
   totalRegistrationCost?: number;
   currencyCode: string;
+  gstNo: string;
 };
 
 export const getCompanyDisplayName = (company: Company | null) =>

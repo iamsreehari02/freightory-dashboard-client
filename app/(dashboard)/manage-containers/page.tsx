@@ -5,75 +5,46 @@ import { DataTable } from "@/components/shared/DataTable";
 import PageHeader from "@/components/PageHeader";
 import { toast } from "sonner";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { getAllContainers } from "@/services/api/containers";
+import { useContainerStore } from "@/store/useContainerStore";
 import { Container } from "@/models/container";
 import ActionsDropdown from "@/components/shared/ActionsDropdown";
 import { getFlagImageUrl } from "@/lib/country";
+import { getStatusBadge } from "@/lib/getBadge";
+import { formatTimeAgo } from "@/lib/utils";
+import { ColumnDef } from "@tanstack/react-table";
 
 export default function ContainersPage() {
-  const [containers, setContainers] = useState<Container[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { containers, isLoading, fetchContainers } = useContainerStore();
+
   const [selectedContainer, setSelectedContainer] = useState<Container | null>(
     null
   );
   const [modalType, setModalType] = useState<"delete" | null>(null);
 
   useEffect(() => {
-    fetchContainers();
-  }, []);
-
-  const fetchContainers = async () => {
-    setLoading(true);
-    try {
-      const res = await getAllContainers(); // API call
-      setContainers(res);
-    } catch (error) {
-      toast.error("Failed to load containers");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // const handleDelete = async () => {
-  //   if (!selectedContainer) return;
-  //   setLoading(true);
-  //   try {
-  //     await deleteContainer(selectedContainer._id);
-  //     toast.success("Container deleted successfully");
-  //     setContainers((prev) =>
-  //       prev.filter((c) => c._id !== selectedContainer._id)
-  //     );
-  //   } catch (error) {
-  //     toast.error("Failed to delete container");
-  //   } finally {
-  //     setLoading(false);
-  //     setModalType(null);
-  //     setSelectedContainer(null);
-  //   }
-  // };
+    fetchContainers().catch(() => toast.error("Failed to load containers"));
+  }, [fetchContainers]);
 
   const handleDelete = () => {
-    console.log("deleted");
+    console.log("delete container:", selectedContainer);
+    // optional: call delete API
+    // then remove it from the store using removeContainer(id)
   };
 
-  const columns = [
+  const columns: ColumnDef<Container>[] = [
     {
       header: "Container ID",
       accessorKey: "containerId",
     },
     {
-      header: "Type",
-      accessorKey: "containerType",
-    },
-    {
-      header: "Company",
-      accessorKey: "company.name",
-      cell: ({ row }: any) => row.original.companyId?.companyName ?? "—",
+      header: "Port",
+      accessorKey: "port",
+      cell: ({ row }) => row.original.port,
     },
     {
       header: "Country",
-      accessorKey: "company.country",
-      cell: ({ row }: any) => {
+      accessorKey: "country",
+      cell: ({ row }) => {
         const country = row.original.country;
         const flagUrl = getFlagImageUrl(country ?? "");
 
@@ -83,7 +54,7 @@ export default function ContainersPage() {
               <img
                 src={flagUrl}
                 alt={country}
-                className="w-5 h-4  border object-cover"
+                className="w-5 h-4 border object-cover"
               />
             )}
             <span>{country ?? "—"}</span>
@@ -92,30 +63,23 @@ export default function ContainersPage() {
       },
     },
     {
-      header: "Status",
-      accessorKey: "status",
-      cell: ({ row }: any) => (
-        <span
-          className={`text-sm px-2 py-1 rounded-sm ${
-            row.original.status === "available"
-              ? "bg-[#C7FAE6] text-green-600"
-              : "bg-[#FDE2E1] text-red-600"
-          }`}
-        >
-          {row.original.status}
-        </span>
-      ),
-    },
-    {
       header: "Created At",
       accessorKey: "createdAt",
-      cell: ({ row }: any) =>
-        new Date(row.original.createdAt).toLocaleDateString(),
+      cell: ({ row }) => {
+        const date = row.original.createdAt;
+        return formatTimeAgo(date);
+      },
     },
+    {
+      header: "Status",
+      accessorKey: "status",
+      cell: ({ row }) => getStatusBadge(row.original.status),
+    },
+
     {
       header: "",
       id: "actions",
-      cell: ({ row }: any) => {
+      cell: ({ row }) => {
         const container = row.original as Container;
 
         return (
@@ -136,7 +100,7 @@ export default function ContainersPage() {
   return (
     <div className="p-4 bg-white rounded-lg space-y-4">
       <PageHeader title="All Containers" />
-      <DataTable columns={columns} data={containers} loading={loading} />
+      <DataTable columns={columns} data={containers} loading={isLoading} />
 
       <ConfirmModal
         open={!!modalType}
@@ -154,7 +118,7 @@ export default function ContainersPage() {
         }
         confirmText="Delete"
         onConfirm={handleDelete}
-        loading={loading}
+        loading={isLoading}
       />
     </div>
   );

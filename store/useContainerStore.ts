@@ -1,24 +1,21 @@
-import { getAllContainers } from "@/services/api/containers";
+import { Container } from "@/models/container";
+import {
+  getAllContainers,
+  getLatestContainers,
+} from "@/services/api/containers";
 import { create } from "zustand";
-
-type Container = {
-  _id: string;
-  containerId: string;
-  port: string;
-  country: string;
-  status: string;
-  createdAt: string;
-  // ...add other fields as needed
-};
 
 interface ContainerStore {
   containers: Container[];
+  latestContainers: Container[];
   isLoading: boolean;
   fetchContainers: () => Promise<void>;
+  fetchLatestContainers: () => Promise<void>;
 }
 
 export const useContainerStore = create<ContainerStore>((set) => ({
   containers: [],
+  latestContainers: [],
   isLoading: false,
 
   fetchContainers: async () => {
@@ -28,6 +25,18 @@ export const useContainerStore = create<ContainerStore>((set) => ({
       set({ containers: data });
     } catch (error) {
       console.error("Failed to fetch containers", error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchLatestContainers: async () => {
+    set({ isLoading: true });
+    try {
+      const data = await getLatestContainers();
+      set({ latestContainers: data });
+    } catch (error) {
+      console.error("Failed to fetch latest containers", error);
     } finally {
       set({ isLoading: false });
     }

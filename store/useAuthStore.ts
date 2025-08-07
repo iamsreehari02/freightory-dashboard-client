@@ -22,6 +22,7 @@ interface Company {
   costPerBranch: number;
   baseRegistrationFee: number;
   totalRegistrationCost: number;
+  gstNo: string;
 }
 
 interface AuthState {
