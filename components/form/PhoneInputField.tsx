@@ -27,6 +27,22 @@ export default function PhoneInputField({
     detect();
   }, []);
 
+  // Global handler for Enter key to trigger form submission
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      // Find the closest form element and trigger submission
+      const form = (e.target as HTMLElement).closest("form");
+      if (form) {
+        // Create and dispatch a submit event
+        const submitEvent = new Event("submit", {
+          bubbles: true,
+          cancelable: true,
+        });
+        form.dispatchEvent(submitEvent);
+      }
+    }
+  };
+
   return (
     <div className="space-y-1">
       {label && <label className="block text-sm font-medium">{label}</label>}
@@ -35,13 +51,8 @@ export default function PhoneInputField({
         country={countryCode}
         value={value}
         onChange={onChange}
+        onKeyDown={handleKeyDown}
         inputStyle={{ width: "100%", height: "40px" }}
-        containerStyle={{ width: "100%" }}
-        inputClass="!w-full"
-        buttonStyle={{
-          borderTopLeftRadius: "0.375rem",
-          borderBottomLeftRadius: "0.375rem",
-        }}
       />
     </div>
   );

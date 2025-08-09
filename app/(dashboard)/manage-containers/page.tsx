@@ -12,9 +12,14 @@ import { getFlagImageUrl } from "@/lib/country";
 import { getStatusBadge } from "@/lib/getBadge";
 import { formatTimeAgo } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
+import PageContainer from "@/components/ui/container";
+import { AppButton } from "@/components/shared/AppButton";
+import { PlusIcon } from "lucide-react";
+import CreateContainerModal from "@/components/container/CreateContainerModal";
 
 export default function ContainersPage() {
   const { containers, isLoading, fetchContainers } = useContainerStore();
+  const [isAddNewModelOpen, setIsAddNewModelOpen] = useState(false);
 
   const [selectedContainer, setSelectedContainer] = useState<Container | null>(
     null
@@ -39,14 +44,15 @@ export default function ContainersPage() {
     {
       header: "Port",
       accessorKey: "port",
-      cell: ({ row }) => row.original.port,
+      cell: ({ row }) => row.original.port?.name ?? "—",
     },
     {
       header: "Country",
       accessorKey: "country",
       cell: ({ row }) => {
-        const country = row.original.country;
-        const flagUrl = getFlagImageUrl(country ?? "");
+        const country =
+          row.original.port?.country ?? row.original.country ?? "-";
+        const flagUrl = getFlagImageUrl(country === "-" ? "" : country);
 
         return (
           <div className="flex items-center gap-2">
@@ -57,7 +63,7 @@ export default function ContainersPage() {
                 className="w-5 h-4 border object-cover"
               />
             )}
-            <span>{country ?? "—"}</span>
+            <span>{country}</span>
           </div>
         );
       },
@@ -97,11 +103,24 @@ export default function ContainersPage() {
     },
   ];
 
-  return (
-    <div className="p-4 bg-white rounded-lg space-y-4">
-      <PageHeader title="All Containers" />
-      <DataTable columns={columns} data={containers} loading={isLoading} />
+  const handleAddNewContainer = () => {
+    setIsAddNewModelOpen(true);
+  };
 
+  return (
+    <PageContainer>
+      <PageHeader
+        title="All Containers"
+        rightContent={
+          <AppButton onClick={handleAddNewContainer}>
+            <span>
+              <PlusIcon />
+            </span>
+            Add New Container
+          </AppButton>
+        }
+      />
+      <DataTable columns={columns} data={containers} loading={isLoading} />
       <ConfirmModal
         open={!!modalType}
         onClose={() => {
@@ -120,6 +139,12 @@ export default function ContainersPage() {
         onConfirm={handleDelete}
         loading={isLoading}
       />
-    </div>
+      {isAddNewModelOpen && (
+        <CreateContainerModal
+          open={isAddNewModelOpen}
+          onOpenChange={setIsAddNewModelOpen}
+        />
+      )}
+    </PageContainer>
   );
 }

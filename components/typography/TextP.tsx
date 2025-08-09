@@ -9,8 +9,9 @@ interface TextPProps {
 export default function TextP({ children, className = "" }: TextPProps) {
   return (
     <p
+      style={{ wordSpacing: "0.05em" }}
       className={cn(
-        "text-[18px] leading-[24px]  font-manrope font-normal",
+        "text-[18px] leading-relaxed  font-manrope font-normal",
         className
       )}
     >

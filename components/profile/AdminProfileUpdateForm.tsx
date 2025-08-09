@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -132,7 +131,7 @@ export default function AdminProfileUpdateForm() {
                   <PhoneInputField
                     label=""
                     value={field.value}
-                    onChange={field.onChange}
+                    onChange={(phone) => field.onChange(phone)}
                   />
                 </FormControl>
                 <FormMessage />

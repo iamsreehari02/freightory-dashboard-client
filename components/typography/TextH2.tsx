@@ -10,8 +10,9 @@ export default function TextH2({
 }) {
   return (
     <h2
+      style={{ wordSpacing: "0.2em" }}
       className={cn(
-        "text-[36px] leading-[42px] text-center font-clash font-semibold",
+        "text-[36px] leading-relaxed text-center font-clash font-semibold",
         className
       )}
     >

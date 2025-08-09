@@ -20,7 +20,7 @@ export function AppButton({
       variant={variant}
       disabled={disabled || loading}
       className={cn(
-        "w-full h-[52px] gap-[10px] rounded-[5px] px-[24px] py-[14px]",
+        "w-max max-w-full h-[52px] gap-[10px] rounded-[5px] px-[24px] py-[14px]",
         className
       )}
       {...props}

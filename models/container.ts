@@ -14,7 +14,7 @@ export type Container = {
   company: Company;
   createdAt: string;
   updatedAt: string;
-  port: string;
+  port: string | { _id: string; name: string; country: string };
   country: string;
   unitsAvailable: number;
   availableFrom: string;

@@ -14,6 +14,7 @@ import { MemberDetailSheet } from "@/components/members/MemberDetailSheet";
 import { Member } from "@/models/member";
 import { getFlagImageUrl } from "@/lib/country";
 import { ColumnDef } from "@tanstack/react-table";
+import PageContainer from "@/components/ui/container";
 
 export default function MembersPage() {
   const { allMembers, fetchAllMembers, isLoadingAll, mutateMember } =
@@ -205,7 +206,7 @@ export default function MembersPage() {
   const { title, description, confirmText, onConfirm } = getConfirmConfig();
 
   return (
-    <div className="p-4 bg-white rounded-lg space-y-4">
+    <PageContainer>
       <PageHeader title="All Members" />
       <DataTable columns={columns} data={allMembers} loading={isLoadingAll} />
 
@@ -229,6 +230,6 @@ export default function MembersPage() {
           onOpenChange={() => setViewMemberId(null)}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

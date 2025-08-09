@@ -10,8 +10,9 @@ export default function TextH4({
 }) {
   return (
     <h4
+      style={{ wordSpacing: "0.2em" }}
       className={cn(
-        "text-[28px] leading-[32px] text-center font-clash font-bold",
+        "text-[28px] leading-relaxed text-center font-clash font-bold",
         className
       )}
     >

@@ -1,10 +1,10 @@
-import { Loader2 } from "lucide-react";
-
 export function GlobalLoading() {
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center bg-background text-primary">
-      <Loader2 className="h-8 w-8 animate-spin mb-4" />
-      <p className="text-sm font-medium">Loading</p>
+    <div className="flex h-screen items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+        <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+      </div>
     </div>
   );
 }

@@ -11,6 +11,7 @@ interface ContainerStore {
   isLoading: boolean;
   fetchContainers: () => Promise<void>;
   fetchLatestContainers: () => Promise<void>;
+  addContainer: (container: Container) => void;
 }
 
 export const useContainerStore = create<ContainerStore>((set) => ({
@@ -41,4 +42,9 @@ export const useContainerStore = create<ContainerStore>((set) => ({
       set({ isLoading: false });
     }
   },
+
+  addContainer: (container) =>
+    set((state) => ({
+      containers: [container, ...state.containers],
+    })),
 }));
