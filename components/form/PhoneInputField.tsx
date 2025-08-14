@@ -9,12 +9,14 @@ interface PhoneInputFieldProps {
   value: string;
   onChange: (value: string) => void;
   label?: string;
+  placeholder?: string;
 }
 
 export default function PhoneInputField({
   value,
   onChange,
   label,
+  placeholder = "98698897",
 }: PhoneInputFieldProps) {
   const [countryCode, setCountryCode] = useState<string>("in");
 
@@ -27,13 +29,10 @@ export default function PhoneInputField({
     detect();
   }, []);
 
-  // Global handler for Enter key to trigger form submission
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      // Find the closest form element and trigger submission
       const form = (e.target as HTMLElement).closest("form");
       if (form) {
-        // Create and dispatch a submit event
         const submitEvent = new Event("submit", {
           bubbles: true,
           cancelable: true,
@@ -52,6 +51,7 @@ export default function PhoneInputField({
         value={value}
         onChange={onChange}
         onKeyDown={handleKeyDown}
+        placeholder={placeholder}
         inputStyle={{ width: "100%", height: "40px" }}
       />
     </div>

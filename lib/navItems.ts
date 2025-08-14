@@ -47,11 +47,7 @@ export const getNavItems = (
       label: "Profile Settings",
       icon: Settings,
     });
-    roleBasedItems.push({
-      href: "/change-password",
-      label: "Change Password",
-      icon: LockKeyhole,
-    });
+  
   }
 
   // Freight forwarder or NVOCC
@@ -83,11 +79,6 @@ export const getNavItems = (
       href: "/manage-branches",
       label: "Manage Branches",
       icon: Building2,
-    });
-    roleBasedItems.push({
-      href: "/manage-agents",
-      label: "Manage Agents",
-      icon: Users2,
     });
   }
 

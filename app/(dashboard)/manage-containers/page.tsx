@@ -16,83 +16,95 @@ import PageContainer from "@/components/ui/container";
 import { AppButton } from "@/components/shared/AppButton";
 import { PlusIcon } from "lucide-react";
 import CreateContainerModal from "@/components/container/CreateContainerModal";
+import { ContainerDetailSheet } from "@/components/container/ContainerDetailSheet"
 
 export default function ContainersPage() {
-  const { containers, isLoading, fetchContainers } = useContainerStore();
-  const [isAddNewModelOpen, setIsAddNewModelOpen] = useState(false);
+  const {
+    containers,
+    isLoading,
+    fetchContainers,
+    fetchContainerById,
+    removeContainer
+  } = useContainerStore();
 
-  const [selectedContainer, setSelectedContainer] = useState<Container | null>(
-    null
-  );
+  const [isAddNewModelOpen, setIsAddNewModelOpen] = useState(false);
+  const [selectedContainer, setSelectedContainer] = useState<Container | null>(null);
   const [modalType, setModalType] = useState<"delete" | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   useEffect(() => {
     fetchContainers().catch(() => toast.error("Failed to load containers"));
   }, [fetchContainers]);
 
-  const handleDelete = () => {
-    console.log("delete container:", selectedContainer);
-    // optional: call delete API
-    // then remove it from the store using removeContainer(id)
+  const handleView = async (container: Container) => {
+    const fullData = await fetchContainerById(container._id)
+    if (fullData) {
+      setSelectedContainer(fullData);
+      setDetailsOpen(true);
+    } else {
+      toast.error("Failed to load container details");
+    }
+  };
+
+   const handleDelete = async () => {
+    if (!selectedContainer) return;
+
+    const success = await removeContainer(selectedContainer._id);
+    if (success) {
+      toast.success("Container deleted successfully");
+      setModalType(null);
+      setSelectedContainer(null);
+    } else {
+      toast.error("Failed to delete container");
+    }
   };
 
   const columns: ColumnDef<Container>[] = [
-    {
-      header: "Container ID",
-      accessorKey: "containerId",
-    },
+    { header: "Container ID", accessorKey: "containerId" },
     {
       header: "Port",
       accessorKey: "port",
-      cell: ({ row }) => row.original.port?.name ?? "—",
+      cell: ({ row }) => {
+        const port = row.original.port;
+        return typeof port === "string" ? port : port?.name ?? "—";
+      }
     },
     {
       header: "Country",
       accessorKey: "country",
       cell: ({ row }) => {
-        const country =
-          row.original.port?.country ?? row.original.country ?? "-";
-        const flagUrl = getFlagImageUrl(country === "-" ? "" : country);
-
+        const port = row.original.port;
+        const country = typeof port === "object" && port !== null ? port.country : undefined;
+        const flagUrl = getFlagImageUrl(country ?? "");
         return (
-          <div className="flex items-center gap-2">
+          <span className="flex items-center gap-2">
             {flagUrl && (
-              <img
-                src={flagUrl}
-                alt={country}
-                className="w-5 h-4 border object-cover"
-              />
+              <img src={flagUrl} alt={country ?? ""} className="w-5 h-3 object-cover border" />
             )}
-            <span>{country}</span>
-          </div>
+            {country ?? "—"}
+          </span>
         );
-      },
+      }
     },
     {
       header: "Created At",
       accessorKey: "createdAt",
-      cell: ({ row }) => {
-        const date = row.original.createdAt;
-        return formatTimeAgo(date);
-      },
+      cell: ({ row }) => formatTimeAgo(row.original.createdAt),
     },
     {
       header: "Status",
       accessorKey: "status",
       cell: ({ row }) => getStatusBadge(row.original.status),
     },
-
     {
       header: "",
       id: "actions",
       cell: ({ row }) => {
         const container = row.original as Container;
-
         return (
           <ActionsDropdown
             status={container.status}
-            onView={() => console.log("View", container)}
-            onEdit={() => console.log("Edit", container)}
+            onView={() => handleView(container)} 
             onDelete={() => {
               setSelectedContainer(container);
               setModalType("delete");
@@ -103,24 +115,20 @@ export default function ContainersPage() {
     },
   ];
 
-  const handleAddNewContainer = () => {
-    setIsAddNewModelOpen(true);
-  };
-
   return (
     <PageContainer>
       <PageHeader
         title="All Containers"
         rightContent={
-          <AppButton onClick={handleAddNewContainer}>
-            <span>
-              <PlusIcon />
-            </span>
+          <AppButton onClick={() => setIsAddNewModelOpen(true)}>
+            <span><PlusIcon /></span>
             Add New Container
           </AppButton>
         }
       />
       <DataTable columns={columns} data={containers} loading={isLoading} />
+
+      {/* Delete modal */}
       <ConfirmModal
         open={!!modalType}
         onClose={() => {
@@ -131,20 +139,26 @@ export default function ContainersPage() {
         description={
           <>
             Are you sure you want to delete{" "}
-            <strong>{selectedContainer?.containerId}</strong>? This cannot be
-            undone.
+            <strong>{selectedContainer?.containerId}</strong>? This cannot be undone.
           </>
         }
         confirmText="Delete"
         onConfirm={handleDelete}
         loading={isLoading}
       />
+
+      {/* Create modal */}
       {isAddNewModelOpen && (
         <CreateContainerModal
           open={isAddNewModelOpen}
           onOpenChange={setIsAddNewModelOpen}
         />
       )}
+
+      <ContainerDetailSheet
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        containerId={selectedContainer?._id ?? null} />
     </PageContainer>
   );
 }

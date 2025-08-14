@@ -41,6 +41,7 @@ import { toast } from "sonner";
 import { getCompanyPorts } from "@/services/api/port";
 import { AppButton } from "../shared/AppButton";
 import { useContainerStore } from "@/store/useContainerStore";
+import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
   country: z.string().min(1, "Country is required"),
@@ -49,7 +50,14 @@ const formSchema = z.object({
   availableFrom: z.date().refine((val) => !!val, {
     message: "Available from date is required",
   }),
+  specialRate: z.coerce.number().optional(),
+  agentDetails: z.string().optional(),
 });
+
+type Port = {
+  _id: string;
+  name: string;
+};
 
 type FormSchemaType = z.infer<typeof formSchema>;
 
@@ -85,14 +93,14 @@ export default function CreateContainerModal({
         const country = form.getValues("country");
         const data = await getCompanyPorts(country || undefined);
         setPorts(
-          data.map((p: any) => ({
+          data.map((p: Port) => ({
             value: p._id,
             label: p.name,
           }))
         );
 
         // Clear port selection if current port is not in new list
-        if (!data.find((p: any) => p._id === form.getValues("port"))) {
+        if (!data.find((p: Port) => p._id === form.getValues("port"))) {
           form.setValue("port", "");
         }
       } catch (err) {
@@ -109,7 +117,7 @@ export default function CreateContainerModal({
         try {
           const data = await getCompanyPorts();
           setPorts(
-            data.map((p: any) => ({
+            data.map((p: Port) => ({
               value: p._id,
               label: p.name,
             }))
@@ -121,17 +129,19 @@ export default function CreateContainerModal({
     }
   }, [form.watch("country")]);
 
+
+
   const onSubmit = async (values: FormSchemaType) => {
     try {
-      // Call API to create container, and get the created container back
       const createdContainer = await addContainer({
         country: values.country,
         port: values.port,
         unitsAvailable: values.units,
         availableFrom: values.availableFrom.toISOString(),
+        specialRate: values.specialRate,
+        agentDetails: values.agentDetails,
       });
 
-      // Update store immediately so UI updates
       useContainerStore.getState().addContainer(createdContainer);
 
       toast.success("Created successfully!");
@@ -141,6 +151,17 @@ export default function CreateContainerModal({
       toast.error("Failed to create. Please try again.");
     }
   };
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        form.handleSubmit(onSubmit)();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [form, onSubmit]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -171,8 +192,8 @@ export default function CreateContainerModal({
                           >
                             {field.value
                               ? countryOptions.find(
-                                  (c) => c.value === field.value
-                                )?.label
+                                (c) => c.value === field.value
+                              )?.label
                               : "Select country"}
                             <Check className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -232,7 +253,7 @@ export default function CreateContainerModal({
                           >
                             {field.value
                               ? ports.find((p) => p.value === field.value)
-                                  ?.label
+                                ?.label
                               : "Select port"}
                             <Check className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -329,12 +350,43 @@ export default function CreateContainerModal({
                   </FormItem>
                 )}
               />
+
+              {/* Special Rate */}
+              <FormField
+                control={form.control}
+                name="specialRate"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Special Rate</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter special rate" {...field} type="number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Agent Details */}
+              <FormField
+                control={form.control}
+                name="agentDetails"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Agent Details</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Enter agent details" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
             </div>
             <div className="flex justify-end gap-3">
               <AppButton variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </AppButton>
-              <AppButton>Save</AppButton>
+              <AppButton type="submit">Save</AppButton>
             </div>
           </form>
         </Form>

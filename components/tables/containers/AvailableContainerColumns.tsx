@@ -9,13 +9,22 @@ export const availableContainerColumns: ColumnDef<Container>[] = [
   {
     header: "Port",
     accessorKey: "port",
-    cell: ({ row }) => <span>{row.original.port ?? "—"}</span>,
+    cell: ({ row }) => {
+      const port = row.original.port;
+      return typeof port === "string" ? port : port?.name ?? "—";
+    }
   },
   {
     header: "Country",
     accessorKey: "country",
     cell: ({ row }) => {
-      const country = row.original.country;
+      const port = row.original.port;
+
+      const country =
+        typeof port === "object" && port !== null
+          ? port.country
+          : undefined;
+
       const flagUrl = getFlagImageUrl(country ?? "");
 
       return (
@@ -23,7 +32,7 @@ export const availableContainerColumns: ColumnDef<Container>[] = [
           {flagUrl && (
             <img
               src={flagUrl}
-              alt={country}
+              alt={country ?? ""}
               className="w-5 h-3 object-cover border"
             />
           )}
@@ -32,6 +41,7 @@ export const availableContainerColumns: ColumnDef<Container>[] = [
       );
     },
   },
+
   {
     header: "Available Units",
     accessorKey: "unitsAvailable",

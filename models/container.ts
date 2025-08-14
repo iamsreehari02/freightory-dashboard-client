@@ -1,15 +1,15 @@
-import { Company } from "./company"; // adjust path based on your structure
+import { Company } from "./company"; 
 
 export type Container = {
   _id: string;
   containerId: string;
   containerType:
-    | "20ft"
-    | "40ft"
-    | "Reefer"
-    | "Open Top"
-    | "Flat Rack"
-    | "Other";
+  | "20ft"
+  | "40ft"
+  | "Reefer"
+  | "Open Top"
+  | "Flat Rack"
+  | "Other";
   status: "available" | "in_use" | "maintenance" | "suspended";
   company: Company;
   createdAt: string;
@@ -18,6 +18,8 @@ export type Container = {
   country: string;
   unitsAvailable: number;
   availableFrom: string;
+  specialRate?: number;
+  agentDetails?: string;
 };
 
 export const getContainerDisplayName = (container: Container | null) =>

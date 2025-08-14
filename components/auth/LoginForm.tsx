@@ -97,7 +97,7 @@ export default function LoginForm() {
         </AppButton>
 
         <div className="text-center">
-          <TextP className="text-sm">
+          <TextP className="text-sm text-[#1F2937]">
             Not a member yet?{" "}
             <ActionText href="/register">Register now</ActionText>
           </TextP>

@@ -142,6 +142,7 @@ export default function AdminProfileUpdateForm() {
           <FormField
             control={form.control}
             name="email"
+            disabled
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>

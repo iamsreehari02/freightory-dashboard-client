@@ -188,7 +188,6 @@ export default function MembersPage() {
           <ActionsDropdown
             status={user.status}
             onView={() => setViewMemberId(user._id)}
-            onEdit={() => console.log("Edit", user)}
             onSuspend={() => {
               setSelectedUser(user);
               setModalType("suspend");
