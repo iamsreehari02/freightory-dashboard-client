@@ -1,4 +1,4 @@
-import { CalendarDays, Container, DollarSign, Users } from "lucide-react";
+import { Building, Calendar, CalendarDays, Container, CreditCard, DollarSign, UserCheck, Users } from "lucide-react";
 import { Truck, PackageCheck, MapPin, Activity } from "lucide-react";
 
 export const dashboardStatsConfig = [
@@ -52,5 +52,33 @@ export const nvoccDashboardStatsConfig = [
     title: "Recent Activities",
     icon: <Activity className="w-6 h-6 text-white" />,
     iconBg: "bg-[#8B5CF6]",
+  },
+];
+
+
+export const freightForwarderDashboardStatsConfig = [
+  {
+    key: "totalBranches",
+    title: "Total Branches",
+    icon: <Building className="w-6 h-6 text-white" />,
+    iconBg: "bg-[#3B82F6]", // blue
+  },
+  {
+    key: "membershipStatus",
+    title: "Membership Status",
+    icon: <UserCheck className="w-6 h-6 text-white" />,
+    iconBg: "bg-[#10B981]", // green
+  },
+  {
+    key: "upcomingRenewals",
+    title: "Upcoming Renewals",
+    icon: <Calendar className="w-6 h-6 text-white" />,
+    iconBg: "bg-[#F59E0B]", // orange
+  },
+  {
+    key: "totalTransactions",
+    title: "Total Transactions",
+    icon: <CreditCard className="w-6 h-6 text-white" />,
+    iconBg: "bg-[#8B5CF6]", // purple
   },
 ];

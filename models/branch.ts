@@ -11,6 +11,19 @@ export type Branch = {
   updatedAt: string;
 };
 
+export interface BranchLog {
+  _id: string;
+  branchId: string;
+  action: "created" | "updated" | "deleted"; // or any other actions you define
+  message: string;
+  createdBy: {
+    _id: string;
+    name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const getBranchDisplayName = (branch: Branch | null) =>
   branch?.name || "—";
 

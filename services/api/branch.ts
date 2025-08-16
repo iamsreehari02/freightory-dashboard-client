@@ -16,7 +16,25 @@ export const getBranchById = async (branchId: string) => {
   return res.data;
 };
 
-export const getBranchesByCompany = async (companyId: string) => {
-  const res = await api.get(`/branch/company/${companyId}`);
+export const getBranchesByCompany = async () => {
+  const res = await api.get("/branch/company");
+  return res.data;
+};
+
+export const getLatestBranchesByCompany = async () => {
+  const res = await api.get("/branch/company/latest");
+  return res.data;
+};
+
+
+
+export const getUpcomingRenewals = async () => {
+  const res = await api.get("/branch/upcoming-renewals");
+  return res.data;
+};
+
+
+export const getBranchLogs = async () => {
+  const res = await api.get("/branch/logs");
   return res.data;
 };
