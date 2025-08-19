@@ -117,9 +117,12 @@ export default function CreateContainerModal({
           .filter((row) => row.PORT_NAME && row.COUNTRY)
           .map((row) => ({
             value: row.INDEX_NO,
-            label: row.PORT_NAME,
+            label: row.PORT_NAME.toLowerCase().replace(/\b\w/g, (c) =>
+              c.toUpperCase()
+            ),
             country: row.COUNTRY,
           }));
+
         setPorts(allPorts);
       } catch (err) {
         console.error("Failed to load ports CSV:", err);
@@ -230,7 +233,7 @@ export default function CreateContainerModal({
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent
-                        className="p-0 max-h-60 overflow-y-auto"
+                        className="p-0 max-h-60 overflow-y-auto overscroll-contain"
                         align="start"
                         sideOffset={4}
                       >
@@ -281,11 +284,7 @@ export default function CreateContainerModal({
                             role="combobox"
                             className="w-full justify-between rounded-md h-10 px-3 font-manrope font-light"
                           >
-                            {field.value
-                              ? filteredPorts.find(
-                                  (p) => p.value === field.value
-                                )?.label
-                              : "Select port"}
+                            {field.value ? field.value : "Select port"}
                             <Check className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </FormControl>
@@ -303,9 +302,10 @@ export default function CreateContainerModal({
                               <CommandItem
                                 key={port.value}
                                 onSelect={() => {
-                                  form.setValue("port", port.value);
+                                  form.setValue("port", port.label);
                                   setPortsOpen(false);
                                 }}
+                                className="capitalize"
                               >
                                 {port.label}
                                 <Check
