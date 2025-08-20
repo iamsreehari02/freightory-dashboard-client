@@ -78,7 +78,11 @@ export default function ForgotPasswordForm() {
                   </FormItem>
                 )}
               />
-              <AppButton type="submit" loading={form.formState.isSubmitting}>
+              <AppButton
+                type="submit"
+                loading={form.formState.isSubmitting}
+                className="w-full"
+              >
                 Send OTP
               </AppButton>
             </form>

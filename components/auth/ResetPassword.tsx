@@ -61,7 +61,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <Card size="lg" className="w-full shadow-xl p-9 max-w-md">
+      <Card size="lg" className="w-full shadow-xl p-9 max-w-xl">
         <CardHeader>
           <AuthCardHeader
             title="Reset Your Password"

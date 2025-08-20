@@ -62,7 +62,9 @@ export default function OtpVerificationClient() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <OtpInput value={otp} onChange={setOtp} />
-            <AppButton type="submit">Verify Code</AppButton>
+            <AppButton type="submit" className="w-full">
+              Verify Code
+            </AppButton>
           </form>
 
           <div className="text-center mt-5">

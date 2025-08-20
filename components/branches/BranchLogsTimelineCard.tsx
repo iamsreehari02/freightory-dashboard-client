@@ -74,7 +74,7 @@ export function BranchLogsTimelineCard() {
       <CardHeader>
         <CardTitle>Branch Activity Timeline</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 max-h-80 overflow-y-auto custom-scroll pr-3">
         {isLoadingLogs && (
           <p className="text-sm text-muted-foreground">Loading...</p>
         )}
@@ -101,7 +101,6 @@ export function BranchLogsTimelineCard() {
                 <span className="text-sm text-muted-foreground capitalize">
                   {log.message}
                 </span>
-                {/* <div>{getBadge(log.action)}</div> */}
               </div>
               <div className="w-24 text-sm text-muted-foreground">
                 {formatDate(log.createdAt)}

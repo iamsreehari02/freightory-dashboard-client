@@ -3,7 +3,6 @@ import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { ReactNode, useState } from "react";
 import AuthProvider from "@/components/AuthProvider";
-import { useAuthStore } from "@/store/useAuthStore";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);

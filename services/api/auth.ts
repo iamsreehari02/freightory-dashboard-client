@@ -22,7 +22,7 @@ export async function verifyOtp({
   email: string;
   otp: string;
 }) {
-  const res = await api.post("/auth//otp/verify", { email, otp });
+  const res = await api.post("/auth/otp/verify", { email, otp });
   return res.data;
 }
 

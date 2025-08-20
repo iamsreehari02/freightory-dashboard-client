@@ -5,10 +5,10 @@ import { Toaster } from "sonner";
 import { AuthInitializer } from "@/components/providers/AuthInitializer";
 
 export const metadata: Metadata = {
-  title: "Freightory",
+  title: "Indlog Network",
   description: "Your freight automation partner",
   icons: {
-    icon: "/favicon.svg",
+    icon: [{ url: "/favicon.svg" }],
   },
 };
 

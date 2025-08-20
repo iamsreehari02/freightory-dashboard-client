@@ -50,13 +50,11 @@ const branchSchema = z.object({
 
 type BranchFormType = z.infer<typeof branchSchema>;
 
-// --- Props ---
 interface CreateBranchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-// --- Component ---
 export default function CreateBranchModal({
   open,
   onOpenChange,
@@ -98,16 +96,16 @@ export default function CreateBranchModal({
     }
   };
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        form.handleSubmit(onSubmit)();
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [form, onSubmit]);
+  // useEffect(() => {
+  //   const handler = (e: KeyboardEvent) => {
+  //     if (e.key === "Enter" && !e.shiftKey) {
+  //       e.preventDefault();
+  //       form.handleSubmit(onSubmit)();
+  //     }
+  //   };
+  //   window.addEventListener("keydown", handler);
+  //   return () => window.removeEventListener("keydown", handler);
+  // }, [form, onSubmit]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

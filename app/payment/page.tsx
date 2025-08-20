@@ -21,6 +21,10 @@ export default function PaymentPage() {
     router.push("/payment/offline");
   };
 
+  const handleOnlinePayment = () => {
+    console.log("Online payment selected");
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10">
       <AuthCardHeader
@@ -56,10 +60,21 @@ export default function PaymentPage() {
                 ))}
               </div>
 
-              {selected === "online" && option.key === "online" ? (
-                <div className="w-full">
-                  <PaypalButton amount="10.00" />
-                </div>
+              {option.key === "online" ? (
+                selected === "online" ? (
+                  <div className="w-full">
+                    {/* Paypal / Stripe button here */}
+                    <PaypalButton amount="10.00" />
+                  </div>
+                ) : (
+                  <Button
+                    size="lg"
+                    className="w-full rounded-sm"
+                    onClick={handleOnlinePayment}
+                  >
+                    {option.buttonLabel}
+                  </Button>
+                )
               ) : (
                 <Button
                   size="lg"

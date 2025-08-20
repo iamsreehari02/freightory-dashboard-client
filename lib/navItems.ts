@@ -47,7 +47,6 @@ export const getNavItems = (
       label: "Profile Settings",
       icon: Settings,
     });
-  
   }
 
   // Freight forwarder or NVOCC
@@ -75,6 +74,11 @@ export const getNavItems = (
   }
 
   if (userRole === "freight_forwarder" || userRole === "nvooc") {
+    roleBasedItems.push({
+      href: "/available-containers",
+      label: "Available Containers",
+      icon: FileText,
+    });
     roleBasedItems.push({
       href: "/manage-branches",
       label: "Manage Branches",

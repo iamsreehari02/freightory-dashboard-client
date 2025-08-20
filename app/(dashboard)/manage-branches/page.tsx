@@ -16,8 +16,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import { BranchDetailSheet } from "@/components/branches/BranchDetailSheet";
 import { formatDate } from "@/lib/utils";
+import { withRoleGuard } from "@/components/auth/AccessControl";
 
-export default function BranchesPage() {
+const BranchesPage = () => {
   const {
     branches,
     isLoadingList,
@@ -138,4 +139,6 @@ export default function BranchesPage() {
       />
     </PageContainer>
   );
-}
+};
+
+export default withRoleGuard(BranchesPage, ["freight_forwarder"]);

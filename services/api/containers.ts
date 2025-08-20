@@ -18,6 +18,11 @@ export const addContainer = async (payload: CreateContainerPayload) => {
   return response.data;
 };
 
+export const getAvailableContainers = async () => {
+  const response = await api.get("/containers");
+  return response.data;
+};
+
 export const getAllContainers = async () => {
   const response = await api.get("/containers/company");
   return response.data;
