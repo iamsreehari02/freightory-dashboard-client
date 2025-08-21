@@ -102,7 +102,7 @@ export default function RegisterForm() {
       await register(values);
       toast.success("Registered successfully!");
       // router.push("/payment");
-      router.push("/dashboard");
+      router.push("/login");
     } catch (error) {
       const err = error as AxiosError<{ message?: string }>;
       const message =
