@@ -24,7 +24,10 @@ import { AxiosError } from "axios";
 // Schema for admin support form
 const adminSupportSchema = z.object({
   subject: z.string().min(1, "Subject is required").max(150, "Too long"),
-  description: z.string().min(1, "Description is required").max(2000, "Too long"),
+  description: z
+    .string()
+    .min(1, "Description is required")
+    .max(2000, "Too long"),
   file: z
     .any()
     .optional()
@@ -47,7 +50,7 @@ export default function AdminSupportForm() {
     defaultValues: {
       subject: "",
       description: "",
-      file: undefined,
+      // file: undefined,
     },
   });
 
@@ -64,14 +67,14 @@ export default function AdminSupportForm() {
     } catch (error) {
       const err = error as AxiosError<{ message?: string }>;
       toast.error(
-        err.response?.data?.message ?? err.message ?? "Failed to send support request."
+        err.response?.data?.message ??
+          err.message ??
+          "Failed to send support request."
       );
     } finally {
       setUploading(false);
     }
   };
-
-
 
   return (
     <Form {...form}>
@@ -86,7 +89,9 @@ export default function AdminSupportForm() {
           name="subject"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>Subject <Asterisk /></FormLabel>
+              <FormLabel>
+                Subject <Asterisk />
+              </FormLabel>
               <FormControl>
                 <Input placeholder="Subject" {...field} disabled={uploading} />
               </FormControl>
@@ -101,7 +106,9 @@ export default function AdminSupportForm() {
           name="description"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>Description <Asterisk /></FormLabel>
+              <FormLabel>
+                Description <Asterisk />
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Describe the issue or request in detail"
@@ -115,11 +122,10 @@ export default function AdminSupportForm() {
           )}
         />
 
-        <FileUpload control={form.control} name="file" disabled={uploading} />
-
+        {/* <FileUpload control={form.control} name="file" disabled={uploading} /> */}
 
         <div className="w-max ml-auto">
-          <AppButton type="submit" disabled={uploading}>
+          <AppButton type="submit" loading={uploading}>
             {uploading ? "Sending..." : "Send Request"}
           </AppButton>
         </div>

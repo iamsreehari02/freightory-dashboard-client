@@ -24,7 +24,12 @@ export function DataTableCard<TData, TValue>({
   return (
     <Card className="flex-1 bg-white p-4 rounded-lg mb-3 max-w-none">
       <PageHeader title={title} rightContent={action} />
-      <DataTable columns={columns} data={data} loading={loading} />
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        showPagination={false}
+      />
     </Card>
   );
 }

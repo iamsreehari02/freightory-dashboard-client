@@ -24,7 +24,7 @@ export const DetailRow = ({
   return (
     <div
       className={cn(
-        "flex items-center justify-between py-3  border-b last:border-none",
+        "flex items-start justify-between py-3  border-b last:border-none",
         className
       )}
     >

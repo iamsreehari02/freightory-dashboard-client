@@ -47,7 +47,11 @@ export function Sidebar({ collapsed }: SidebarProps) {
         className={cn("p-4", collapsed ? "flex justify-center" : "px-6 py-4")}
       >
         <Image
-          src="/assets/images/logo.svg"
+          src={
+            collapsed
+              ? "/assets/images/logo-collapsed.svg"
+              : "/assets/images/logo.svg"
+          }
           alt="logo"
           width={collapsed ? 40 : 200}
           height={52}

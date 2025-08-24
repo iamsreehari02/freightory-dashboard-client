@@ -4,6 +4,7 @@ import Image from "next/image";
 import TextH3 from "./typography/TextH3";
 import TextP from "./typography/TextP";
 import { Truck, Globe, ShieldCheck } from "lucide-react";
+import TextH4 from "./typography/TextH4";
 
 interface AuthLeftPanelProps {
   bgImage?: string;
@@ -43,7 +44,7 @@ export default function AuthLeftPanel({
           <div className="space-y-12 max-w-md text-left text-white">
             <Image src={logoPath} alt="logo" width={200} height={60} />
             <div className="space-y-2">
-              <TextH3 className="text-left">{title}</TextH3>
+              <TextH4 className="text-left">{title}</TextH4>
               <TextP className="text-white/90 text-left text-md">
                 {subtitle}
               </TextP>

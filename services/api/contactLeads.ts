@@ -10,12 +10,12 @@ export const createContactLead = (data: {
 }) => {
   return api.post("/leads", data);
 };
-
-export async function getContactLeads(): Promise<Contact[]> {
-  const res = await api.get<Contact[]>("/leads"); 
-  return res.data; 
+export async function getContactLeads(latest = false): Promise<Contact[]> {
+  const res = await api.get<Contact[]>("/leads", {
+    params: latest ? { latest: true } : {},
+  });
+  return res.data;
 }
-
 
 export const getContactLeadById = async (id: string): Promise<Contact> => {
   const res = await api.get<Contact>(`/leads/${id}`);

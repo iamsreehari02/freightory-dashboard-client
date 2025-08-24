@@ -8,10 +8,14 @@ import { DataTableCard } from "@/components/shared/DataTableCard";
 import { recentMemberColumns } from "@/components/tables/members/RecentMembersColumns";
 import { useMemberStore } from "@/store/useMemberStore";
 import { ContainerActivityTimelineCard } from "../cards/ContainerActivityTimelineCard";
+import LatestContactLeads from "../contact-leads/LatestContactLeads";
+import { useContactStore } from "@/store/useContactLeads";
+import { recentContactLeadColumns } from "../tables/contact-leads/RecentContactLeadColumns";
 
 export default function AdminDashboard() {
   const { latestMembers, isLoadingLatest, fetchLatestMembers } =
     useMemberStore();
+  const { isLoadingList, fetchLeads, leads } = useContactStore();
 
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [loadingStats, setLoadingStats] = useState(true);
@@ -31,6 +35,7 @@ export default function AdminDashboard() {
 
     fetchStats();
     fetchLatestMembers();
+    fetchLeads(true);
   }, []);
 
   return (
@@ -66,13 +71,15 @@ export default function AdminDashboard() {
         />
       </div>
 
-      {/* Container Activity + Spacer */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         <ContainerActivityTimelineCard />
 
-        <div className="h-full bg-muted rounded-xl flex items-center justify-center text-muted-foreground text-sm p-4">
-          {/* Optional content or placeholder */}
-        </div>
+        <DataTableCard
+          title="Recent Contact Leads"
+          columns={recentContactLeadColumns}
+          data={leads}
+          loading={isLoadingList}
+        />
       </div>
     </div>
   );

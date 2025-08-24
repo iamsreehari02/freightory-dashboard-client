@@ -6,6 +6,7 @@ import { Building } from "lucide-react";
 import { useBranchStore } from "@/store/useBranchStore";
 import { BranchLog } from "@/models/branch";
 import { formatDate } from "@/lib/utils";
+import PageHeader from "../PageHeader";
 
 export function BranchLogsTimelineCard() {
   const { logs, fetchLogs, isLoadingLogs } = useBranchStore();
@@ -72,7 +73,7 @@ export function BranchLogsTimelineCard() {
   return (
     <Card className="max-w-none">
       <CardHeader>
-        <CardTitle>Branch Activity Timeline</CardTitle>
+        <PageHeader title="Branch Activity Timeline" />
       </CardHeader>
       <CardContent className="space-y-4 max-h-80 overflow-y-auto custom-scroll pr-3">
         {isLoadingLogs && (

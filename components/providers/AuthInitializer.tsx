@@ -8,5 +8,5 @@ export function AuthInitializer() {
     useAuthStore.getState().checkAuth();
   }, []);
 
-  return null; // no UI
+  return null;
 }

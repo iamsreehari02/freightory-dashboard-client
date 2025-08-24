@@ -10,7 +10,11 @@ import { getStatusBadge } from "@/lib/getBadge";
 import { formatTimeAgo } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import PageContainer from "@/components/ui/container";
-import { getAvailableContainers } from "@/services/api/containers";
+import {
+  getAllContainers,
+  getAvailableContainers,
+  getLatestContainers,
+} from "@/services/api/containers";
 import { withRoleGuard } from "@/components/auth/AccessControl";
 
 const AvailableContainersPage = () => {
@@ -63,6 +67,18 @@ const AvailableContainersPage = () => {
           </span>
         );
       },
+    },
+    {
+      header: "Agent Details",
+      accessorKey: "agentDetails",
+      cell: ({ row }) => (
+        <span
+          className="text-gray-700 text-sm truncate block max-w-[200px]"
+          title={row.original.agentDetails}
+        >
+          {row.original.agentDetails ?? "—"}
+        </span>
+      ),
     },
     {
       header: "Created At",

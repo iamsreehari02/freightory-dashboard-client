@@ -10,7 +10,6 @@ export type Member = {
   company: Company | null;
 };
 
-// 🔍 Selectors for member
 export const getMemberStatusText = (status: Member["status"]) =>
   status === "suspended" ? "Suspended" : "Active";
 

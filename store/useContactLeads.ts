@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { getContactLeads, getContactLeadById } from "@/services/api/contactLeads";
+import {
+  getContactLeads,
+  getContactLeadById,
+} from "@/services/api/contactLeads";
 import { Contact } from "@/models/contactLead";
 
 interface ContactState {
@@ -10,7 +13,7 @@ interface ContactState {
   errorList: string | null;
   errorDetail: string | null;
 
-  fetchLeads: () => Promise<void>;
+  fetchLeads: (latest?: boolean) => Promise<void>;
   fetchLeadById: (id: string) => Promise<Contact | null>;
   setLeads: (leads: Contact[]) => void;
   addLead: (lead: Contact) => void;
@@ -28,13 +31,16 @@ export const useContactStore = create<ContactState>()(
       errorList: null,
       errorDetail: null,
 
-      fetchLeads: async () => {
+      fetchLeads: async (latest = false) => {
         try {
           set({ isLoadingList: true, errorList: null });
-          const data = await getContactLeads();
+          const data = await getContactLeads(latest);
           set({ leads: data, isLoadingList: false });
         } catch (err: any) {
-          set({ errorList: err.message || "Failed to fetch leads", isLoadingList: false });
+          set({
+            errorList: err.message || "Failed to fetch leads",
+            isLoadingList: false,
+          });
         }
       },
 
@@ -45,7 +51,10 @@ export const useContactStore = create<ContactState>()(
           set({ isLoadingDetail: false });
           return lead;
         } catch (err: any) {
-          set({ errorDetail: err.message || "Failed to fetch lead", isLoadingDetail: false });
+          set({
+            errorDetail: err.message || "Failed to fetch lead",
+            isLoadingDetail: false,
+          });
           return null;
         }
       },
@@ -66,12 +75,19 @@ export const useContactStore = create<ContactState>()(
           leads: get().leads.filter((l) => l._id !== leadId),
         }),
 
-      clear: () => set({ leads: [], errorList: null, errorDetail: null, isLoadingList: false, isLoadingDetail: false }),
+      clear: () =>
+        set({
+          leads: [],
+          errorList: null,
+          errorDetail: null,
+          isLoadingList: false,
+          isLoadingDetail: false,
+        }),
     }),
     {
       name: "contact-leads-storage",
       partialize: (state) => ({
-        leads: state.leads, 
+        leads: state.leads,
       }),
     }
   )

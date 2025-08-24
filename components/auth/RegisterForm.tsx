@@ -146,8 +146,9 @@ export default function RegisterForm() {
           <FormField
             control={form.control}
             name="phone"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
+                <FormLabel>Phone</FormLabel>
                 <FormControl>
                   <PhoneInputField
                     label="Phone"
@@ -155,6 +156,7 @@ export default function RegisterForm() {
                     onChange={field.onChange}
                   />
                 </FormControl>
+                <FormMessage>{fieldState?.error?.message}</FormMessage>
               </FormItem>
             )}
           />

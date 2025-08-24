@@ -17,7 +17,7 @@ export function ContactMessageReplyCard({ message }: Props) {
   return (
     <Card className="max-w-none">
       <CardHeader>
-        <CardTitle className="text-base">Message & Reply</CardTitle>
+        <CardTitle className="text-base">Message</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Message */}
@@ -26,7 +26,7 @@ export function ContactMessageReplyCard({ message }: Props) {
         </div>
 
         {/* Reply */}
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           <Textarea
             placeholder="Write your reply here..."
             className="min-h-[120px] resize-none"
@@ -34,7 +34,7 @@ export function ContactMessageReplyCard({ message }: Props) {
           <AppButton onClick={handleSendReply} className="w-full">
             Send Reply
           </AppButton>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

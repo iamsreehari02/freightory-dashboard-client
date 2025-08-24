@@ -10,7 +10,7 @@ import { Container } from "@/models/container";
 import ActionsDropdown from "@/components/shared/ActionsDropdown";
 import { getFlagImageUrl } from "@/lib/country";
 import { getStatusBadge } from "@/lib/getBadge";
-import { formatTimeAgo } from "@/lib/utils";
+import { formatDate, formatTimeAgo } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import PageContainer from "@/components/ui/container";
 import { AppButton } from "@/components/shared/AppButton";
@@ -62,7 +62,15 @@ export default function ContainersPage() {
   };
 
   const columns: ColumnDef<Container>[] = [
-    { header: "Container ID", accessorKey: "containerId" },
+    {
+      header: "Container ID",
+      accessorKey: "containerId",
+      cell: ({ row }) => (
+        <span className="text-primary font-medium">
+          {row.original.containerId}
+        </span>
+      ),
+    },
     {
       header: "Port",
       accessorKey: "port",
@@ -94,14 +102,35 @@ export default function ContainersPage() {
       },
     },
     {
-      header: "Created At",
-      accessorKey: "createdAt",
-      cell: ({ row }) => formatTimeAgo(row.original.createdAt),
+      header: "Available Units",
+      accessorKey: "unitsAvailable",
+      cell: ({ row }) => (
+        <span className="font-semibold text-gray-800">
+          {row.original.unitsAvailable}
+        </span>
+      ),
+    },
+    {
+      header: "Available From",
+      accessorKey: "availableFrom",
+      cell: ({ row }) => formatDate(row.original.availableFrom),
     },
     {
       header: "Status",
       accessorKey: "status",
       cell: ({ row }) => getStatusBadge(row.original.status),
+    },
+    {
+      header: "Agent Details",
+      accessorKey: "agentDetails",
+      cell: ({ row }) => (
+        <span
+          className="text-gray-700 text-sm truncate block max-w-[200px]"
+          title={row.original.agentDetails}
+        >
+          {row.original.agentDetails ?? "—"}
+        </span>
+      ),
     },
     {
       header: "",

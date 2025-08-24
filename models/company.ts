@@ -9,6 +9,7 @@ export type Company = {
   pinCode: string;
   freightType: "freight_forwarder" | "nvocc";
   costPerBranch: number;
+  branchCount: number;
   baseRegistrationFee?: number;
   totalRegistrationCost?: number;
   currencyCode: string;

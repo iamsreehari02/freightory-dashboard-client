@@ -15,8 +15,10 @@ export const registerSchema = z
       .max(50, "Contact person name is too long")
       .trim(),
 
-    phone: z.string().regex(/^[0-9]{8,15}$/, "Phone must be 8–15 digits"), // simple numeric validation
-
+    phone: z
+      .string()
+      .nonempty("Phone number is required") // <- ensures it's not empty
+      .regex(/^[0-9]{8,15}$/, "Phone must be 8–15 digits"),
     email: z.string().email("Invalid email address").trim(),
 
     website: z

@@ -32,7 +32,13 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Check } from "lucide-react";
-import { cn, countryOptions, countryOptions2 } from "@/lib/utils";
+import {
+  cn,
+  countryOptions,
+  countryOptions2,
+  getUserCountryCode,
+  getUserCurrency,
+} from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
 import { useEffect, useState } from "react";
@@ -91,6 +97,18 @@ export default function CreateContainerModal({
   const [ports, setPorts] = useState<Port[]>([]);
   const [portsOpen, setPortsOpen] = useState(false);
   const [filteredPorts, setFilteredPorts] = useState<Port[]>([]);
+  const [currencySymbol, setCurrencySymbol] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCurrency = async () => {
+      const countryCode = await getUserCountryCode();
+      if (countryCode) {
+        const { symbol } = await getUserCurrency(countryCode);
+        setCurrencySymbol(symbol);
+      }
+    };
+    fetchCurrency();
+  }, []);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema) as Resolver<FormSchemaType>,
@@ -389,12 +407,19 @@ export default function CreateContainerModal({
                 render={({ field }) => (
                   <FormItem className="col-span-2">
                     <FormLabel>Special Rate</FormLabel>
+
                     <FormControl>
-                      <Input
-                        placeholder="Enter special rate"
-                        {...field}
-                        type="number"
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                          {currencySymbol ?? ""}
+                        </span>
+                        <Input
+                          className="pl-7" // padding-left so text doesn't overlap symbol
+                          placeholder="Enter special rate"
+                          type="number"
+                          {...field}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

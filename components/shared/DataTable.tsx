@@ -23,12 +23,14 @@ type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   loading?: boolean;
+  showPagination?: boolean;
 };
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   loading = false,
+  showPagination = true,
 }: DataTableProps<TData, TValue>) {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -121,7 +123,7 @@ export function DataTable<TData, TValue>({
       </Table>
 
       {/* Pagination Controls */}
-      {!loading && (
+      {!loading && showPagination && (
         <div className="flex items-center justify-between px-2">
           <div className="text-sm text-gray-600">
             Page {pageIndex + 1} of {table.getPageCount()}

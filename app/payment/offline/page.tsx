@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,6 +23,7 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import TextP from "@/components/typography/TextP";
+import { getBankDetails } from "@/services/api/bank";
 
 // Schema
 const proofSchema = z.object({
@@ -51,6 +53,27 @@ export default function OfflinePaymentPage() {
     formState: { isSubmitting },
   } = form;
 
+  const [bankDetails, setBankDetails] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBankDetails = async () => {
+      try {
+        setLoading(true);
+        const data = await getBankDetails();
+        setBankDetails(data.bankDetails); // ✅ Access the right object
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load bank details. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBankDetails();
+  }, []);
+
   const onSubmit = async (data: ProofFormData) => {
     const formData = new FormData();
     formData.append("transactionId", data.transactionId);
@@ -71,7 +94,7 @@ export default function OfflinePaymentPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mt-12">
-        {/* Bank Details Card */}
+        {/* Bank Details */}
         <Card className="border-2">
           <CardContent className="p-2 space-y-4">
             <div className="flex items-center gap-4 mb-6">
@@ -84,14 +107,36 @@ export default function OfflinePaymentPage() {
               <TextH4 className="text-xl">Bank Details</TextH4>
             </div>
 
-            <div className="space-y-4">
-              <CardRow label="Account Name" value="ABC Pvt Ltd" />
-              <CardRow label="Bank Name" value="HDFC Bank" />
-              <CardRow label="Account Number" value="1234567890" />
-              <CardRow label="IFSC Code" value="HDFC0001234" />
-              <CardRow label="Branch" value="MG Road, Bangalore" />
-              <CardRow label="UPI ID" value="abcpvt@hdfcbank" />
-            </div>
+            {loading ? (
+              <p className="text-gray-500">Loading bank details...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : bankDetails ? (
+              <div className="space-y-4">
+                <CardRow
+                  label="Account Holder Name"
+                  value={bankDetails?.accountHolderName || "N/A"}
+                />
+                <CardRow
+                  label="Bank Name"
+                  value={bankDetails?.bankName || "N/A"}
+                />
+                <CardRow
+                  label="Account Number"
+                  value={bankDetails?.accountNumber || "N/A"}
+                />
+                <CardRow
+                  label="IFSC Code"
+                  value={bankDetails?.ifscCode || "N/A"}
+                />
+                <CardRow
+                  label="Branch"
+                  value={bankDetails?.branchName || "N/A"}
+                />
+              </div>
+            ) : (
+              <p className="text-gray-500">No bank details found.</p>
+            )}
           </CardContent>
         </Card>
 
@@ -164,11 +209,7 @@ export default function OfflinePaymentPage() {
                   )}
                 />
 
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  //   className="w-full"
-                >
+                <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Submitting..." : "Submit & Continue"}
                 </Button>
               </form>
@@ -176,6 +217,7 @@ export default function OfflinePaymentPage() {
           </CardContent>
         </Card>
       </div>
+
       <TextP className="text-gray-500 my-20">
         All payments are secure and processed safely
       </TextP>

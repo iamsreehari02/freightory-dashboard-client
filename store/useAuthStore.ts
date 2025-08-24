@@ -8,6 +8,7 @@ interface User {
   phone: string;
   companyId: string;
   role: "admin" | "freight_forwarder" | "nvocc";
+  isSuspended: boolean;
 }
 
 interface Company {

@@ -43,7 +43,13 @@ export const recentMemberColumns: ColumnDef<Member>[] = [
     header: "Status",
     accessorKey: "status",
     cell: ({ row }) => (
-      <span className="text-green-600 text-sm bg-[#C7FAE6] p-1 rounded-sm">
+      <span
+        className={`text-sm px-2 py-1 rounded-sm ${
+          row.original.status === "active"
+            ? "bg-[#C7FAE6] text-green-600"
+            : "bg-[#FDE2E1] text-red-600"
+        }`}
+      >
         {row.original.status}
       </span>
     ),

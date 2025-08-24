@@ -18,7 +18,18 @@ export function ContactLeadInfoCard({ lead }: Props) {
       </CardHeader>
       <CardContent className="space-y-1">
         <DetailRow icon={User} label="Name" value={lead.name} />
-        <DetailRow icon={Mail} label="Email" value={lead.email} />
+        <DetailRow
+          icon={Mail}
+          label="Email"
+          value={
+            <a
+              href={`mailto:${lead.email}`}
+              className="text-blue-600 hover:underline"
+            >
+              {lead.email}
+            </a>
+          }
+        />
         <DetailRow icon={Phone} label="Phone" value={lead.phone} />
         <DetailRow icon={Building} label="Company" value={lead.companyName} />
         <DetailRow

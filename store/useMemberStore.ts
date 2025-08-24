@@ -47,7 +47,7 @@ export const useMemberStore = create<MemberState>((set, get) => ({
   fetchLatestMembers: async () => {
     try {
       set({ isLoadingLatest: true, error: null });
-      const res = await getAllMembers(true); // latest = true
+      const res = await getAllMembers(true);
       set({ latestMembers: res, isLoadingLatest: false });
     } catch (err) {
       console.error(err);

@@ -15,6 +15,7 @@ import { Member } from "@/models/member";
 import { getFlagImageUrl } from "@/lib/country";
 import { ColumnDef } from "@tanstack/react-table";
 import PageContainer from "@/components/ui/container";
+import { formatDate } from "@/lib/utils";
 
 export default function MembersPage() {
   const { allMembers, fetchAllMembers, isLoadingAll, mutateMember } =
@@ -161,7 +162,7 @@ export default function MembersPage() {
     {
       header: "Joined",
       accessorKey: "createdAt",
-      cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+      cell: ({ row }) => formatDate(row.original.createdAt),
     },
     {
       header: "Status",

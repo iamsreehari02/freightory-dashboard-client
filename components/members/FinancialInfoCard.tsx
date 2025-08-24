@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
 import { DetailRow } from "../ui/detail-row";
 import { Member } from "@/models/member";
-import { formatCurrency, formatNumber } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 
 type Props = {
   member: Member;
@@ -18,18 +18,20 @@ export function FinancialInfoCard({ member }: Props) {
   console.log("currency code", currencyCode);
 
   return (
-    <Card size="lg">
+    <Card className="max-w-none">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base text-foreground -mb-4">
           Financial Details
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1 ">
-        <DetailRow
-          icon={DollarSign}
-          label="Cost Per Branch"
-          value={formatCurrency(company.costPerBranch, currencyCode)}
-        />
+        {company.branchCount > 0 && (
+          <DetailRow
+            icon={DollarSign}
+            label="Cost Per Branch"
+            value={formatCurrency(company.costPerBranch, currencyCode)}
+          />
+        )}
         <DetailRow
           icon={DollarSign}
           label="Base Registration Fee"

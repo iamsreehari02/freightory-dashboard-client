@@ -54,7 +54,7 @@ export const ContainerActivityCard = () => {
   return (
     <Card className="p-4 max-w-none">
       <CardContent className="space-y-4">
-        <PageHeader title="Container Activity Timeline" />
+        <PageHeader title="Container Activity" />
         <div className="space-y-3">
           {logs.slice(0, 5).map((log) => {
             const { icon, bg } =

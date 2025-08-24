@@ -38,7 +38,7 @@ export default function CardRow({
     <div className={cn("flex items-center justify-between text-sm", className)}>
       <div className="flex flex-col">
         <TextP className="text-sm text-gray-500">{label}</TextP>
-        <TextP className=" text-lg font-semibold">{value}</TextP>
+        <TextP className=" text-lg font-medium capitalize">{value}</TextP>
       </div>
 
       {copyable && (

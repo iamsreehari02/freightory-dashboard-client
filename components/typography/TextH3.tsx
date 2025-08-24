@@ -10,7 +10,7 @@ export default function TextH3({
 }) {
   return (
     <h3
-      style={{ wordSpacing: "0.2em" }}
+      style={{ wordSpacing: "0.1em" }}
       className={cn(
         "text-[32px] leading-relaxed text-center font-clash font-semibold",
         className

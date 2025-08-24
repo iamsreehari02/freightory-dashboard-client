@@ -38,10 +38,10 @@ export const ContainerActivityTimelineCard = () => {
 
   return (
     <Card className="p-4 max-w-none">
-      <CardContent className="space-y-4">
-        <PageHeader title="Container Activity Timeline" />
+      <PageHeader title="Container Activity Timeline" />
+      <CardContent className="space-y-4 max-h-80 overflow-y-auto custom-scroll pr-3 pt-2">
         <div className="space-y-3">
-          {logs.slice(0, 5).map((log, index: number) => {
+          {logs.map((log) => {
             const { dot, border } =
               actionColors[log.action] || actionColors["default"];
 
@@ -54,7 +54,7 @@ export const ContainerActivityTimelineCard = () => {
                 )}
               >
                 <div className="flex items-center space-x-2">
-                  <span className={clsx("h-2 w-2 rounded-full ", dot)} />
+                  <span className={clsx("h-2 w-2 rounded-full", dot)} />
                   <div>
                     <p className="text-sm font-medium">
                       {log.message}{" "}
