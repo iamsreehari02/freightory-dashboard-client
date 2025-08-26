@@ -12,6 +12,7 @@ import { DetailRow } from "../ui/detail-row";
 import { Container, getContainerTypeLabel } from "@/models/container";
 import { getStatusBadge } from "@/lib/getBadge";
 import { formatDate } from "@/lib/utils";
+import { AgentDetailsRow } from "../ui/agent-details-row";
 
 type Props = {
   container: Container;
@@ -73,7 +74,7 @@ export function ContainerInfoCard({ container }: Props) {
           />
         )}
         {container.agentDetails && (
-          <DetailRow
+          <AgentDetailsRow
             icon={User}
             label="Agent Details"
             value={container.agentDetails}

@@ -24,6 +24,14 @@ import {
 } from "@/components/ui/form";
 import TextP from "@/components/typography/TextP";
 import { getBankDetails } from "@/services/api/bank";
+import { useSearchParams } from "next/navigation";
+import { getPaymentSummary } from "@/services/api/payment";
+import {
+  formatCurrency,
+  getConversionRate,
+  getUserCurrency,
+} from "@/lib/utils";
+import { uploadPaymentProof } from "@/services/api/paymentProof";
 
 // Schema
 const proofSchema = z.object({
@@ -57,12 +65,73 @@ export default function OfflinePaymentPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [paymentSummary, setPaymentSummary] = useState<any>(null);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+
+  const [userCurrency, setUserCurrency] = useState<string>("USD");
+  const [currencySymbol, setCurrencySymbol] = useState<string>("₹");
+  const [convertedAmount, setConvertedAmount] = useState<number>(0);
+
+  const searchParams = useSearchParams();
+  const companyId = searchParams.get("companyId");
+
+  // Fetch user's currency based on company country
+  useEffect(() => {
+    const fetchUserCurrency = async () => {
+      try {
+        // Assume backend returns companyCountryCode in paymentSummary later
+        const companyCountryCode = "IN"; // Default India if not available
+        const { currencyCode, symbol } = await getUserCurrency(
+          companyCountryCode
+        );
+        setUserCurrency(currencyCode);
+        setCurrencySymbol(symbol);
+      } catch (err) {
+        console.error("Failed to fetch user currency:", err);
+      }
+    };
+
+    fetchUserCurrency();
+  }, []);
+
+  // Fetch payment summary & convert amount if needed
+  useEffect(() => {
+    const fetchPaymentSummary = async () => {
+      try {
+        setSummaryLoading(true);
+        const data = await getPaymentSummary(companyId || "");
+        const summary = data.data;
+        setPaymentSummary(summary);
+
+        const amountInINR = summary?.totalCost || 0;
+
+        // Convert only if user's currency is different from INR
+        if (userCurrency !== "INR") {
+          const rate = await getConversionRate(userCurrency);
+          const converted = (amountInINR / 100) * rate;
+          setConvertedAmount(converted);
+        } else {
+          setConvertedAmount(amountInINR / 100);
+        }
+      } catch (err) {
+        console.error(err);
+        setSummaryError("Failed to load payable amount.");
+      } finally {
+        setSummaryLoading(false);
+      }
+    };
+
+    if (companyId) fetchPaymentSummary();
+  }, [companyId, userCurrency]);
+
+  // Fetch bank details
   useEffect(() => {
     const fetchBankDetails = async () => {
       try {
         setLoading(true);
         const data = await getBankDetails();
-        setBankDetails(data.bankDetails); // ✅ Access the right object
+        setBankDetails(data.bankDetails);
       } catch (err) {
         console.error(err);
         setError("Failed to load bank details. Please try again later.");
@@ -75,15 +144,28 @@ export default function OfflinePaymentPage() {
   }, []);
 
   const onSubmit = async (data: ProofFormData) => {
-    const formData = new FormData();
-    formData.append("transactionId", data.transactionId);
-    formData.append("notes", data.notes || "");
-    formData.append("file", data.file[0]);
+    if (!companyId) {
+      toast.error("Company ID missing!");
+      return;
+    }
 
-    console.log("Submitting proof:", Object.fromEntries(formData.entries()));
+    try {
+      const file = data.file[0];
 
-    toast.success("Payment proof submitted successfully.");
-    reset();
+      const result = await uploadPaymentProof(
+        companyId,
+        data.transactionId,
+        file,
+        data.notes
+      );
+
+      console.log("Uploaded proof:", result);
+      toast.success("Payment proof submitted successfully.");
+      reset();
+    } catch (err: any) {
+      console.error("Error uploading payment proof:", err);
+      toast.error(err.response?.data?.message || "Failed to upload proof.");
+    }
   };
 
   return (
@@ -92,6 +174,22 @@ export default function OfflinePaymentPage() {
         title="Complete Your Offline Payment"
         description="Transfer the amount using the bank details below. Upload your UTR/transaction proof to verify."
       />
+
+      {/* Total Payable Amount */}
+      <div className="text-center mt-4 mb-8">
+        {summaryLoading ? (
+          <p className="text-gray-500 text-base">Fetching payable amount...</p>
+        ) : summaryError ? (
+          <p className="text-red-500 text-base">{summaryError}</p>
+        ) : (
+          <>
+            <p className="text-gray-600 text-base">Total Payable Amount</p>
+            <TextH4 className="text-primary">
+              {formatCurrency(convertedAmount * 100, userCurrency)}
+            </TextH4>
+          </>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mt-12">
         {/* Bank Details */}

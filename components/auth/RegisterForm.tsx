@@ -99,10 +99,18 @@ export default function RegisterForm() {
     try {
       values.branchCount = showBranchCounter ? branchCount : 0;
       values.costPerBranch = pricePerBranch;
-      await register(values);
+
+      const response = await register(values);
+
+      const { companyId } = response.data;
+
       toast.success("Registered successfully!");
-      // router.push("/payment");
-      router.push("/login");
+
+      // Store companyId in localStorage or context for payment
+      localStorage.setItem("companyId", companyId);
+
+      // Redirect to payment page with companyId
+      router.push(`/payment?companyId=${companyId}`);
     } catch (error) {
       const err = error as AxiosError<{ message?: string }>;
       const message =
@@ -151,7 +159,7 @@ export default function RegisterForm() {
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
                   <PhoneInputField
-                    label="Phone"
+                    // label=""
                     value={field.value}
                     onChange={field.onChange}
                   />

@@ -123,15 +123,32 @@ export default function ContainersPage() {
     {
       header: "Agent Details",
       accessorKey: "agentDetails",
-      cell: ({ row }) => (
-        <span
-          className="text-gray-700 text-sm truncate block max-w-[200px]"
-          title={row.original.agentDetails}
-        >
-          {row.original.agentDetails ?? "—"}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const details = row.original.agentDetails
+          ? row.original.agentDetails.split("\n")
+          : [];
+
+        return (
+          <div
+            className="text-gray-700 text-sm max-w-[200px] truncate"
+            title={row.original.agentDetails}
+          >
+            {details.length > 0 ? (
+              <div className="flex flex-col">
+                {details.map((line: string, index: number) => (
+                  <span key={index} className="leading-5 truncate">
+                    {line.trim() || "—"}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              "—"
+            )}
+          </div>
+        );
+      },
     },
+
     {
       header: "",
       id: "actions",

@@ -48,6 +48,7 @@ import { AppButton } from "../shared/AppButton";
 import { useContainerStore } from "@/store/useContainerStore";
 import { Textarea } from "../ui/textarea";
 import Papa from "papaparse";
+import AgentDetailsField from "../form/AgentDetailsField";
 
 // -----------------------
 // Form schema
@@ -97,18 +98,6 @@ export default function CreateContainerModal({
   const [ports, setPorts] = useState<Port[]>([]);
   const [portsOpen, setPortsOpen] = useState(false);
   const [filteredPorts, setFilteredPorts] = useState<Port[]>([]);
-  const [currencySymbol, setCurrencySymbol] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCurrency = async () => {
-      const countryCode = await getUserCountryCode();
-      if (countryCode) {
-        const { symbol } = await getUserCurrency(countryCode);
-        setCurrencySymbol(symbol);
-      }
-    };
-    fetchCurrency();
-  }, []);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema) as Resolver<FormSchemaType>,
@@ -202,11 +191,26 @@ export default function CreateContainerModal({
   // -----------------------
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+
+      // ✅ Prevent form submit if focus is inside a textarea or input field
+      const tagName = target.tagName.toLowerCase();
+      const isTextInput =
+        tagName === "textarea" ||
+        (tagName === "input" &&
+          ["text", "number", "email", "password", "search"].includes(
+            (target as HTMLInputElement).type
+          ));
+
+      if (isTextInput) return; // ⛔ Skip Enter handling inside inputs
+
+      // ✅ Allow Enter to submit form only for other elements (e.g. buttons)
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         form.handleSubmit(onSubmit)();
       }
     };
+
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [form, onSubmit]);
@@ -409,17 +413,11 @@ export default function CreateContainerModal({
                     <FormLabel>Special Rate</FormLabel>
 
                     <FormControl>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                          {currencySymbol ?? ""}
-                        </span>
-                        <Input
-                          className="pl-7" // padding-left so text doesn't overlap symbol
-                          placeholder="Enter special rate"
-                          type="number"
-                          {...field}
-                        />
-                      </div>
+                      <Input
+                        placeholder="Enter special rate"
+                        type="number"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -427,19 +425,7 @@ export default function CreateContainerModal({
               />
 
               {/* Agent Details */}
-              <FormField
-                control={form.control}
-                name="agentDetails"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Agent Details</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Enter agent details" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <AgentDetailsField form={form} />
             </div>
 
             <div className="flex justify-end gap-3">

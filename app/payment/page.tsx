@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn, paymentOptions } from "@/lib/utils";
 import AuthCardHeader from "@/components/auth/AuthCardHeader";
@@ -10,20 +10,69 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import PaypalButton from "@/components/paypal/PaypalButton";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getPaymentSummary } from "@/services/api/payment";
 
 export default function PaymentPage() {
   const [selected, setSelected] = useState<"online" | "offline" | null>(null);
+  const [paymentSummary, setPaymentSummary] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  const searchParams = useSearchParams();
   const router = useRouter();
 
+  const companyId = searchParams.get("companyId");
+
+  useEffect(() => {
+    if (!companyId) {
+      setError("Company ID is missing!");
+      setLoading(false);
+      return;
+    }
+
+    const fetchPaymentSummary = async () => {
+      try {
+        setLoading(true);
+        const data = await getPaymentSummary(companyId);
+        console.log("daat in summary", data);
+        setPaymentSummary(data.data);
+      } catch (err: any) {
+        console.error("❌ Error fetching payment summary:", err);
+        setError(
+          err.response?.data?.message || "Failed to fetch payment summary"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPaymentSummary();
+  }, [companyId]);
+
   const handleOfflinePayment = () => {
-    router.push("/payment/offline");
+    router.push(`/payment/offline?companyId=${companyId}`);
   };
 
   const handleOnlinePayment = () => {
-    console.log("Online payment selected");
+    setSelected("online");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading payment summary...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10">
@@ -37,7 +86,10 @@ export default function PaymentPage() {
           <Card
             key={option.key}
             onClick={() => setSelected(option.key as "online" | "offline")}
-            className="border-2 transition"
+            className={cn(
+              "border-2 transition cursor-pointer",
+              selected === option.key ? "border-blue-500" : "border-gray-200"
+            )}
           >
             <CardContent className="p-10 flex flex-col items-center space-y-4">
               <Image
@@ -63,8 +115,7 @@ export default function PaymentPage() {
               {option.key === "online" ? (
                 selected === "online" ? (
                   <div className="w-full">
-                    {/* Paypal / Stripe button here */}
-                    <PaypalButton amount="10.00" />
+                    <PaypalButton amount={paymentSummary?.totalCost || 0} />
                   </div>
                 ) : (
                   <Button
