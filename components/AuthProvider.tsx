@@ -10,14 +10,18 @@ interface AuthProviderProps {
 }
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-  const { isAuthenticated, isLoading, checkAuth, user } = useAuthStore();
+  const { isAuthenticated, isLoading, checkAuth, user, company } =
+    useAuthStore();
   const router = useRouter();
   const [authChecked, setAuthChecked] = useState(false);
-  const [redirected, setRedirected] = useState(false); // ensure redirect only happens once
+  const [redirected, setRedirected] = useState(false);
 
   useEffect(() => {
     const initAuth = async () => {
-      if (authChecked || redirected) return; // prevent double calls
+      if (authChecked || redirected) return;
+
+      // wait until Zustand store hydrates
+      if (isLoading) return;
 
       const isValid = await checkAuth();
 
@@ -27,26 +31,33 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         return;
       }
 
+      // Admin bypasses all checks
+      if (user?.role === "admin") {
+        setAuthChecked(true);
+        return;
+      }
+
+      // Other users
+      if (user?.isSuspended) {
+        setRedirected(true);
+        router.replace("/account-suspended");
+        return;
+      }
+
+      if (company?.paymentStatus !== "completed") {
+        setRedirected(true);
+        router.replace("/pending-approval");
+        return;
+      }
+
       setAuthChecked(true);
     };
 
     initAuth();
-  }, [checkAuth, authChecked, redirected, router]);
+  }, [checkAuth, authChecked, redirected, router, user, company, isLoading]);
 
-  // Handle suspended user after auth is checked
-  useEffect(() => {
-    if (authChecked && user && user.isSuspended && !redirected) {
-      setRedirected(true);
-      router.replace("/account-suspended");
-    }
-  }, [authChecked, user, redirected, router]);
-
-  // Show loading until auth is done or redirecting
-  if (isLoading || !authChecked || (user && user.isSuspended && !redirected))
-    return <GlobalLoading />;
-
-  // Don't render children if not authenticated or suspended
-  if (!isAuthenticated || (user && user.isSuspended)) return null;
+  if (isLoading || !authChecked || redirected) return <GlobalLoading />;
+  if (!isAuthenticated) return null;
 
   return <>{children}</>;
 }

@@ -40,6 +40,18 @@ export const getStatusBadge = (status: string | null | undefined) => {
           Pending
         </Badge>
       );
+    case "completed":
+      return (
+        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+          Completed
+        </Badge>
+      );
+    case "failed":
+      return (
+        <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+          Failed
+        </Badge>
+      );
     case "deleted":
       return (
         <Badge className="bg-red-200 text-red-800 hover:bg-red-200">

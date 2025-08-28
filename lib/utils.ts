@@ -361,3 +361,15 @@ export const formatDate = (dateString: string): string => {
 export const formatTimeAgo = (dateString: string): string => {
   return formatDistanceToNow(new Date(dateString), { addSuffix: true });
 };
+
+export const paisaToUSD = (paisa: number, usdRate: number) => {
+  // paisa / 100 → INR, then convert to USD using rate
+  return (paisa / 100 / usdRate).toFixed(2);
+};
+
+export const paisaToINR = (paisa: number) => {
+  return (paisa / 100).toLocaleString("en-IN", {
+    style: "currency",
+    currency: "INR",
+  });
+};

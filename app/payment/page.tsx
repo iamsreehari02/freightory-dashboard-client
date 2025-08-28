@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn, paymentOptions } from "@/lib/utils";
+import { cn, paisaToUSD, paymentOptions } from "@/lib/utils";
 import AuthCardHeader from "@/components/auth/AuthCardHeader";
 import TextH4 from "@/components/typography/TextH4";
 import TextP from "@/components/typography/TextP";
@@ -57,6 +57,7 @@ export default function PaymentPage() {
   const handleOnlinePayment = () => {
     setSelected("online");
   };
+  console.log("toal in total", paymentSummary?.totalCost);
 
   if (loading) {
     return (
@@ -73,6 +74,8 @@ export default function PaymentPage() {
       </div>
     );
   }
+
+  const amountInUSD = (paymentSummary?.totalCost || 0) / 100;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10">
@@ -115,7 +118,16 @@ export default function PaymentPage() {
               {option.key === "online" ? (
                 selected === "online" ? (
                   <div className="w-full">
-                    <PaypalButton amount={paymentSummary?.totalCost || 0} />
+                    {/* <PaypalButton
+                      // convert paisa → USD
+                      amount={paisaToUSD(paymentSummary?.totalCost || 0, 83.5)}
+                    /> */}
+                    <PaypalButton
+                      amount={((paymentSummary?.totalCost || 0) / 100).toFixed(
+                        2
+                      )}
+                      companyId={companyId!}
+                    />
                   </div>
                 ) : (
                   <Button

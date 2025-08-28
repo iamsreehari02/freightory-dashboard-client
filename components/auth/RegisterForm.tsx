@@ -98,7 +98,7 @@ export default function RegisterForm() {
   async function onSubmit(values: RegisterSchema) {
     try {
       values.branchCount = showBranchCounter ? branchCount : 0;
-      values.costPerBranch = pricePerBranch;
+      // values.costPerBranch = pricePerBranch;
 
       const response = await register(values);
 

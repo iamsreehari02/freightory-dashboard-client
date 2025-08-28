@@ -23,7 +23,7 @@ interface Company {
   costPerBranch: number;
   baseRegistrationFee: number;
   totalRegistrationCost: number;
-  gstNo: string;
+  paymentStatus: "pending" | "completed" | "failed";
 }
 
 interface AuthState {

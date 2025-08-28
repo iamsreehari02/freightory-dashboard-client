@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/form";
 import TextP from "@/components/typography/TextP";
 import { getBankDetails } from "@/services/api/bank";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getPaymentSummary } from "@/services/api/payment";
 import {
   formatCurrency,
@@ -72,6 +72,8 @@ export default function OfflinePaymentPage() {
   const [userCurrency, setUserCurrency] = useState<string>("USD");
   const [currencySymbol, setCurrencySymbol] = useState<string>("₹");
   const [convertedAmount, setConvertedAmount] = useState<number>(0);
+
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const companyId = searchParams.get("companyId");
@@ -162,6 +164,8 @@ export default function OfflinePaymentPage() {
       console.log("Uploaded proof:", result);
       toast.success("Payment proof submitted successfully.");
       reset();
+
+      router.push("/pending-approval");
     } catch (err: any) {
       console.error("Error uploading payment proof:", err);
       toast.error(err.response?.data?.message || "Failed to upload proof.");
