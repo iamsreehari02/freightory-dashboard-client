@@ -21,6 +21,7 @@ interface Company {
   pinCode: string;
   freightType: string;
   costPerBranch: number;
+  branchCount: number;
   baseRegistrationFee: number;
   totalRegistrationCost: number;
   paymentStatus: "pending" | "completed" | "failed";

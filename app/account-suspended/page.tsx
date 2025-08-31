@@ -3,9 +3,20 @@
 import { Mail, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
 
 export default function AccountSuspendedPage() {
   const adminEmail = "admin@indlognetwork.com";
+
+  const router = useRouter();
+
+  const { logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    await logout(); // Perform the logout action
+    router.replace("/login"); // Redirect to the login page
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
@@ -37,9 +48,13 @@ export default function AccountSuspendedPage() {
         </Link>
 
         <div className="mt-6">
-          <Link href="/login" className="text-sm text-primary hover:underline">
+          <Button
+            variant="link"
+            onClick={handleLogout} // Call handleLogout on click
+            className="text-sm text-primary hover:underline"
+          >
             Go back to login
-          </Link>
+          </Button>
         </div>
       </div>
 

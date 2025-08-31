@@ -13,7 +13,7 @@ export type Company = {
   baseRegistrationFee?: number;
   totalRegistrationCost?: number;
   currencyCode: string;
-  gstNo: string;
+  currency: string;
 };
 
 export const getCompanyDisplayName = (company: Company | null) =>

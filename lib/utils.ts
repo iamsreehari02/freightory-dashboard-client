@@ -339,7 +339,6 @@ const currencyToLocaleMap: Record<string, string> = {
   AUD: "en-AU",
   CAD: "en-CA",
   CNY: "zh-CN",
-  // ... add more if needed
 };
 
 export function formatCurrency(

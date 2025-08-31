@@ -18,46 +18,65 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const initAuth = async () => {
+      // Prevent multiple executions
       if (authChecked || redirected) return;
 
-      // wait until Zustand store hydrates
+      // Wait until Zustand store hydrates
       if (isLoading) return;
 
-      const isValid = await checkAuth();
+      try {
+        const isValid = await checkAuth();
 
-      if (!isValid) {
+        // Step 1: Check if user is authenticated
+        if (!isValid) {
+          setRedirected(true);
+          router.replace("/login");
+          return;
+        }
+
+        // Step 2: Wait for company data to be loaded before checking payment
+        // If company is null/undefined, wait for it to load
+        if (!company) {
+          console.log("Company data not loaded yet, waiting...");
+          return;
+        }
+
+        // Step 3: Check payment status (only after company data is loaded)
+        if (company.paymentStatus !== "completed") {
+          console.log("Payment status:", company.paymentStatus);
+          setRedirected(true);
+          router.replace("/pending-approval");
+          return;
+        }
+
+        // Step 4: Then check if user is suspended
+        if (user?.isSuspended) {
+          setRedirected(true);
+          router.replace("/account-suspended");
+          return;
+        }
+
+        // All checks passed
+        setAuthChecked(true);
+      } catch (error) {
+        console.error("Auth check failed:", error);
         setRedirected(true);
         router.replace("/login");
-        return;
       }
-
-      // Admin bypasses all checks
-      if (user?.role === "admin") {
-        setAuthChecked(true);
-        return;
-      }
-
-      // Other users
-      if (user?.isSuspended) {
-        setRedirected(true);
-        router.replace("/account-suspended");
-        return;
-      }
-
-      if (company?.paymentStatus !== "completed") {
-        setRedirected(true);
-        router.replace("/pending-approval");
-        return;
-      }
-
-      setAuthChecked(true);
     };
 
     initAuth();
   }, [checkAuth, authChecked, redirected, router, user, company, isLoading]);
 
-  if (isLoading || !authChecked || redirected) return <GlobalLoading />;
-  if (!isAuthenticated) return null;
+  // Show loading while checking auth or during redirect
+  if (isLoading || !authChecked || redirected) {
+    return <GlobalLoading />;
+  }
+
+  // Final safety check - if somehow not authenticated, don't render children
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return <>{children}</>;
 }

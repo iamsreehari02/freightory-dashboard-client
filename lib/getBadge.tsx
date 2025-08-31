@@ -52,6 +52,12 @@ export const getStatusBadge = (status: string | null | undefined) => {
           Failed
         </Badge>
       );
+    case "rejected":
+      return (
+        <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">
+          Rejected
+        </Badge>
+      );
     case "deleted":
       return (
         <Badge className="bg-red-200 text-red-800 hover:bg-red-200">

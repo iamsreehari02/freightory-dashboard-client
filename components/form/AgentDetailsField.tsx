@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   FormField,
@@ -10,7 +10,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-export default function AgentDetailsField({ form }: { form: any }) {
+// @ts-expect-error Reason: form type is unknown, bypassing TS for now
+export default function AgentDetailsField({ form }) {
   const placeholders = ["Name", "Contact", "Email", "Address"];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [cursorPosition, setCursorPosition] = useState(0);

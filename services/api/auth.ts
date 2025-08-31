@@ -43,7 +43,14 @@ export const resetPassword = async ({
 };
 
 export const getMe = async () => {
-  const response = await api.get("/auth/me");
+  const response = await api.get("/auth/me", {
+    headers: {
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    },
+    timeout: 10000,
+  });
   return response.data;
 };
 

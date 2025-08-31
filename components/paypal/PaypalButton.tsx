@@ -2,6 +2,7 @@
 
 import { capturePayPalOrder, createPayPalOrder } from "@/services/api/paypal";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -27,16 +28,21 @@ export default function PaypalButton({ amount, companyId }: PaypalButtonProps) {
               companyId
             );
             return id;
-          } catch (error: any) {
-            console.error("Error creating order:", error);
-            if (error.response?.data?.error === "Payment already completed") {
+          } catch (error) {
+            const axiosError = error as AxiosError<{ error: string }>;
+            console.error("Error creating order:", axiosError);
+
+            if (
+              axiosError.response?.data?.error === "Payment already completed"
+            ) {
               toast.error(
                 "Payment has already been completed for this company."
               );
             } else {
               toast.error("Something went wrong while creating the order.");
             }
-            throw error; // important: re-throw to let PayPalButtons know creation failed
+
+            throw error; // re-throw so PayPalButtons knows creation failed
           }
         }}
         // 🔹 Step 2: When approved, ask backend to capture order
@@ -48,7 +54,7 @@ export default function PaypalButton({ amount, companyId }: PaypalButtonProps) {
               data.orderID,
               companyId
             );
-            console.log("✅ Payment Captured:", captureResult);
+            console.log("Payment Captured:", captureResult);
 
             if (
               captureResult.success &&
@@ -61,8 +67,9 @@ export default function PaypalButton({ amount, companyId }: PaypalButtonProps) {
                 "Payment captured, but something went wrong updating your account."
               );
             }
-          } catch (error: any) {
-            console.error("Error capturing order:", error);
+          } catch (error) {
+            const axiosError = error as AxiosError<{ error: string }>;
+            console.error("Error capturing order:", axiosError);
             toast.error("Failed to capture payment. Please try again.");
           }
         }}

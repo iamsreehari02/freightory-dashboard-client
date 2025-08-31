@@ -28,7 +28,6 @@ const profileSchema = z.object({
   phone: z.string().min(1, "Required"),
   email: z.string().email("Invalid email"),
   website: z.string().optional(),
-  gstNo: z.string().optional(),
   address: z.string().min(1, "Required"),
 });
 
@@ -47,7 +46,6 @@ export default function AdminProfileUpdateForm() {
       phone: user?.phone || "",
       email: user?.email || "",
       website: company?.website || "",
-      gstNo: company?.gstNo || "",
       address: company?.headOfficeAddress || "",
     },
   });
@@ -65,7 +63,6 @@ export default function AdminProfileUpdateForm() {
       companyData.companyName = values.companyName;
     if (values.website !== company?.website)
       companyData.website = values.website;
-    if (values.gstNo !== company?.gstNo) companyData.gstNo = values.gstNo;
     if (values.address !== company?.headOfficeAddress)
       companyData.headOfficeAddress = values.address;
 
@@ -166,20 +163,6 @@ export default function AdminProfileUpdateForm() {
                 <FormLabel>Website</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="Eg: https://yourcompany.com" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="gstNo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>GST Number</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Eg: 29ABCDE1234F2Z5" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

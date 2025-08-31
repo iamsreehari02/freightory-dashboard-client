@@ -1,15 +1,15 @@
-import { Company } from "./company"; 
+import { Company } from "./company";
 
 export type Container = {
   _id: string;
   containerId: string;
   containerType:
-  | "20ft"
-  | "40ft"
-  | "Reefer"
-  | "Open Top"
-  | "Flat Rack"
-  | "Other";
+    | "20ft"
+    | "40ft"
+    | "Reefer"
+    | "Open Top"
+    | "Flat Rack"
+    | "Other";
   status: "available" | "in_use" | "maintenance" | "suspended";
   company: Company;
   createdAt: string;

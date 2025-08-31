@@ -8,14 +8,17 @@ import { DataTableCard } from "@/components/shared/DataTableCard";
 import { recentMemberColumns } from "@/components/tables/members/RecentMembersColumns";
 import { useMemberStore } from "@/store/useMemberStore";
 import { ContainerActivityTimelineCard } from "../cards/ContainerActivityTimelineCard";
-import LatestContactLeads from "../contact-leads/LatestContactLeads";
 import { useContactStore } from "@/store/useContactLeads";
 import { recentContactLeadColumns } from "../tables/contact-leads/RecentContactLeadColumns";
+import { useTransactionStore } from "@/store/useTransactionsStore";
+import { recentTransactionColumns } from "../tables/transactions/RecentTransactionsColumns";
 
 export default function AdminDashboard() {
   const { latestMembers, isLoadingLatest, fetchLatestMembers } =
     useMemberStore();
   const { isLoadingList, fetchLeads, leads } = useContactStore();
+
+  const { transactions, fetchAllTransactions } = useTransactionStore();
 
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [loadingStats, setLoadingStats] = useState(true);
@@ -36,11 +39,11 @@ export default function AdminDashboard() {
     fetchStats();
     fetchLatestMembers();
     fetchLeads(true);
+    fetchAllTransactions(true);
   }, []);
 
   return (
     <div className="space-y-6">
-      {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {dashboardStatsConfig.map((stat, index) => (
           <StatCard
@@ -65,8 +68,8 @@ export default function AdminDashboard() {
 
         <DataTableCard
           title="Recent Transactions"
-          columns={recentMemberColumns}
-          data={latestMembers}
+          columns={recentTransactionColumns}
+          data={transactions}
           loading={isLoadingLatest}
         />
       </div>

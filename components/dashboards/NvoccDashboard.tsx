@@ -8,6 +8,8 @@ import { DataTableCard } from "../shared/DataTableCard";
 import { useContainerStore } from "@/store/useContainerStore";
 import { availableContainerColumns } from "../tables/containers/AvailableContainerColumns";
 import { ContainerActivityCard } from "../cards/ContainerActivityCard";
+import { recentTransactionColumns } from "../tables/transactions/RecentTransactionsColumns";
+import { useTransactionStore } from "@/store/useTransactionsStore";
 
 export default function NvoccDashboard() {
   const [counts, setCounts] = useState<Record<string, null>>({});
@@ -15,6 +17,12 @@ export default function NvoccDashboard() {
 
   const { latestContainers, fetchLatestContainers, isLoading } =
     useContainerStore();
+
+  const {
+    transactions,
+    fetchTransactionsByCompany,
+    isLoading: isTransactionsLoading,
+  } = useTransactionStore();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -31,6 +39,7 @@ export default function NvoccDashboard() {
 
     fetchStats();
     fetchLatestContainers();
+    fetchTransactionsByCompany(true);
   }, [fetchLatestContainers]);
 
   return (
@@ -56,9 +65,9 @@ export default function NvoccDashboard() {
         />
         <DataTableCard
           title="Recent Transactions"
-          columns={availableContainerColumns}
-          data={[]}
-          loading={isLoading}
+          columns={recentTransactionColumns}
+          data={transactions}
+          loading={isTransactionsLoading}
         />
       </div>
       <ContainerActivityCard />

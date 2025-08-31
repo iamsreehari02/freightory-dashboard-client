@@ -17,6 +17,7 @@ import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import { BranchDetailSheet } from "@/components/branches/BranchDetailSheet";
 import { formatDate } from "@/lib/utils";
 import { withRoleGuard } from "@/components/auth/AccessControl";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const BranchesPage = () => {
   const {
@@ -32,9 +33,26 @@ const BranchesPage = () => {
   const [modalType, setModalType] = useState<"delete" | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
+  // Get the branch count from the AuthStore
+  const branchCount = useAuthStore((state) => state.company?.branchCount ?? 0);
+
+  // Fetch branches if company has any
   useEffect(() => {
-    fetchBranches().catch(() => toast.error("Failed to load branches"));
-  }, [fetchBranches]);
+    if (branchCount > 0) {
+      fetchBranches().catch(() => toast.error("Failed to load branches"));
+    }
+  }, [fetchBranches, branchCount]);
+
+  if (branchCount === 0) {
+    return (
+      <PageContainer>
+        <PageHeader title="All Branches" />
+        <p className="text-center text-gray-500 mt-10">
+          No branches available. Please add a branch first.
+        </p>
+      </PageContainer>
+    );
+  }
 
   const handleView = async (branch: Branch) => {
     const fullData = await fetchBranchById(branch._id);
@@ -53,6 +71,16 @@ const BranchesPage = () => {
     toast.success("Branch deleted successfully");
     setModalType(null);
     setSelectedBranch(null);
+  };
+
+  // Handle Add New Branch
+  const handleAddNewBranch = () => {
+    // Check if the branch count from the store is equal to the branches already displayed
+    if (branches.length >= branchCount) {
+      toast.error("You have reached the maximum number of allowed branches.");
+    } else {
+      setIsAddNewModalOpen(true);
+    }
   };
 
   const columns: ColumnDef<Branch>[] = [
@@ -95,7 +123,7 @@ const BranchesPage = () => {
       <PageHeader
         title="All Branches"
         rightContent={
-          <AppButton onClick={() => setIsAddNewModalOpen(true)}>
+          <AppButton onClick={handleAddNewBranch}>
             <span>
               <PlusIcon />
             </span>

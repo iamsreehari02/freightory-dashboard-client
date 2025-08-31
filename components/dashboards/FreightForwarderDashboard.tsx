@@ -9,10 +9,15 @@ import { recentBranchColumns } from "../tables/branches/RecentBranchColumns";
 import { useBranchStore } from "@/store/useBranchStore";
 import { UpcomingRenewalsCard } from "../branches/UpcomingRenewalsCard";
 import { BranchLogsTimelineCard } from "../branches/BranchLogsTimelineCard";
+import { recentTransactionColumns } from "../tables/transactions/RecentTransactionsColumns";
+import { useTransactionStore } from "@/store/useTransactionsStore";
 
 export default function FreightForwarderDashboard() {
   const { latestBranches, isLoadingLatest, fetchLatestBranches } =
     useBranchStore();
+
+  const { transactions, fetchTransactionsByCompany, isLoading } =
+    useTransactionStore();
 
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [loadingStats, setLoadingStats] = useState(true);
@@ -32,6 +37,7 @@ export default function FreightForwarderDashboard() {
 
     fetchStats();
     fetchLatestBranches();
+    fetchTransactionsByCompany(true);
   }, []);
 
   return (
@@ -61,9 +67,9 @@ export default function FreightForwarderDashboard() {
 
         <DataTableCard
           title="Recent Transactions"
-          columns={recentBranchColumns}
-          data={latestBranches}
-          loading={isLoadingLatest}
+          columns={recentTransactionColumns}
+          data={transactions}
+          loading={isLoading}
         />
       </div>
 

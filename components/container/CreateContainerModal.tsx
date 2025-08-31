@@ -32,13 +32,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Check } from "lucide-react";
-import {
-  cn,
-  countryOptions,
-  countryOptions2,
-  getUserCountryCode,
-  getUserCurrency,
-} from "@/lib/utils";
+import { cn, countryOptions2 } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
 import { useEffect, useState } from "react";
@@ -46,7 +40,6 @@ import { addContainer } from "@/services/api/containers";
 import { toast } from "sonner";
 import { AppButton } from "../shared/AppButton";
 import { useContainerStore } from "@/store/useContainerStore";
-import { Textarea } from "../ui/textarea";
 import Papa from "papaparse";
 import AgentDetailsField from "../form/AgentDetailsField";
 

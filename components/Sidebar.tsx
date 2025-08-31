@@ -22,8 +22,9 @@ export function Sidebar({ collapsed }: SidebarProps) {
   const userRole = useUserRole();
   const companyType = useCompanyType();
   const logout = useAuthStore((state) => state.logout);
+  const branchCount = useAuthStore((state) => state.company?.branchCount ?? 0);
 
-  const navItems = getNavItems(userRole, companyType);
+  const navItems = getNavItems(userRole, companyType, branchCount);
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loading, setLoading] = useState(false);

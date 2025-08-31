@@ -96,7 +96,11 @@ export function UpcomingRenewalsCard() {
                   >
                     {daysRemaining} day{daysRemaining !== 1 ? "s" : ""}
                   </span>
-                  <AppButton onClick={handlePaynow}>Renew Now</AppButton>
+
+                  {/* Show Renew Now button only if within 7 days */}
+                  {daysRemaining <= 7 && (
+                    <AppButton onClick={handlePaynow}>Renew Now</AppButton>
+                  )}
                 </div>
               </div>
             );

@@ -55,3 +55,25 @@ export const updatePaymentProofStatus = async (
 
   return response.data;
 };
+
+export const approvePaymentProof = async (
+  proofId: string,
+  remarks?: string
+) => {
+  const response = await api.post("/payment-proof/approve", {
+    proofId,
+    remarks,
+  });
+
+  return response.data;
+};
+
+// ✅ Reject a payment proof
+export const rejectPaymentProof = async (proofId: string, remarks?: string) => {
+  const response = await api.post("/payment-proof/reject", {
+    proofId,
+    remarks,
+  });
+
+  return response.data;
+};

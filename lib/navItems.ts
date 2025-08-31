@@ -21,7 +21,8 @@ interface NavItem {
 
 export const getNavItems = (
   userRole: string | null,
-  companyType: string | null
+  companyType: string | null,
+  branchCount: number = 0
 ): NavItem[] => {
   const baseItems: NavItem[] = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -58,8 +59,8 @@ export const getNavItems = (
     });
 
     roleBasedItems.push({
-      href: "/my-invoices",
-      label: "My Invoices",
+      href: "/my-transactions",
+      label: "My Transactions",
       icon: FileText,
     });
   }
@@ -73,12 +74,15 @@ export const getNavItems = (
     });
   }
 
-  if (userRole === "freight_forwarder" || userRole === "nvooc") {
+  if (userRole === "freight_forwarder") {
     roleBasedItems.push({
       href: "/available-containers",
       label: "Available Containers",
       icon: FileText,
     });
+  }
+
+  if (userRole === "freight_forwarder" && branchCount > 0) {
     roleBasedItems.push({
       href: "/manage-branches",
       label: "Manage Branches",
